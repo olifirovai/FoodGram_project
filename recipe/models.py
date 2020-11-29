@@ -19,6 +19,11 @@ class Types(models.TextChoices):
     DINNER = ('dinner', 'dinner',)
 
 
+class RecipeManager(models.Manager):
+    def get_favorite_recipes(self, user):
+        return self.get_queryset().filter(author__following__user=user)
+
+
 class Recipe(models.Model):
     name = models.CharField(max_length=200, verbose_name='recipe\'s name')
     author = models.ForeignKey(User, on_delete=models.CASCADE,
@@ -35,6 +40,7 @@ class Recipe(models.Model):
     picture = models.ImageField(verbose_name='picture of the recipe',
                                 blank=True, null=True)
     slug = models.SlugField(max_length=250, unique=True)
+    objects = RecipeManager()
 
     class Meta:
         verbose_name = 'Recipe'
@@ -45,12 +51,13 @@ class Recipe(models.Model):
         if not self.slug:
             random_mark = ''.join(
                 random.choice(string.ascii_letters + string.digits) for _ in
-                range(6))
+                range(6)
+            )
             self.slug = slugify(random_mark + '-' + self.name)
         super(Recipe, self).save(*args, **kwargs)
 
     def __str__(self):
-        return self.name
+        return self.name[:30]
 
 
 class RecipeIngredient(models.Model):
@@ -68,3 +75,18 @@ class RecipeIngredient(models.Model):
         verbose_name = 'Recipe Ingredient'
         verbose_name_plural = 'Recipes Ingredients'
         ordering = ['recipe']
+
+
+class FavoriteRecipe(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE,
+                             related_name='liker')
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE,
+                               related_name='favorite_recipe')
+
+    class Meta:
+        verbose_name = 'Favorite Recipe'
+        verbose_name_plural = 'Favorite Recipes'
+        ordering = ['user']
+
+    def __str__(self):
+        return f'favorite recipe - {self.recipe.name}'

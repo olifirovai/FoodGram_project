@@ -35,3 +35,27 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.username
+
+
+class FollowManager(models.Manager):
+    def get_follow(self, author, user):
+        return self.get_queryset().filter(author=author, user=user)
+
+    def get_follow_list(self, user):
+        return self.get_queryset().filter(author__following__user=user)
+
+
+class Follow(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE,
+                             related_name='follower')
+    author = models.ForeignKey(User, on_delete=models.CASCADE,
+                               related_name='following')
+    objects = FollowManager()
+
+    class Meta:
+        verbose_name = 'Follow'
+        verbose_name_plural = 'Followers'
+
+
+    def __str__(self):
+        return f'follower - {self.user} following - {self.author}'

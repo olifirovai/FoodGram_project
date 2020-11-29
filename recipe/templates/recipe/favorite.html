@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %} Favorite Recipes {% endblock %}
+{% block static %}
+    <link rel="stylesheet" href="../../../static/pages/index.css">
+{% endblock %}
+
+{% block content %}
+
+    <div class="main__header">
+        <h1 class="main__title">My Favorite Recipes</h1>
+            {% include "recipe/page_tags.html" %}
+    </div>
+    <div class="card-list" >
+        {% for recipe in page %}
+            <div class="card" data-id="{{ recipe.id }}">
+                {% include "recipe/recipeItem.html" %}
+                <div class="card__footer">
+                    <button class="button button_style_light-blue" name="purchases" data-out><span class="icon-plus button__icon"></span>Add to My Shopping List</button>
+                    <button class="button button_style_none" name="favorites" data-out><span class="icon-favorite"></span></button>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+        {% include "paginator.html" %}
+{% endblock content %}

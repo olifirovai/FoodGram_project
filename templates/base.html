@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport"
+              content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>{% block title %}Page Title{% endblock %} | Foodgram</title>
+        {% load static %}
+        {% csrf_token %}
+        {% block static %}
+
+        {% endblock %}
+        <script src="../static/js/components/Header.js"></script>
+    </head>
+
+    <body class="body">
+        {% include "nav.html" %}
+        <main class="main container">
+{#            <div class="container">#}
+                {% block content %}
+
+                {% endblock content %}
+{#            </div>#}
+        </main>
+
+        {% include "footer.html" %}
+        <script src="../static/js/utils/debouncing.js"></script>
+        <script src="../static/js/formRecipe.js"></script>
+        <script src="../static/js/components/MainCards.js"></script>
+
+        <script src="../static/js/components/Purchases.js"></script>
+        <script src="../static/js/components/Favorites.js"></script>
+
+        <script src="../static/js/config/config.js"></script>
+        <script src="../static/js/components/CardList.js"></script>
+        <script src="../static/js/components/Header.js"></script>
+
+        <script src="../static/js/api/Api.js"></script>
+        <script src="../static/js/favorite.js"></script>
+        <script src="../static/js/formRecipe.js"></script>
+        <script src="../static/js/myFollow.js"></script>
+        <script src="../static/js/components/MyFollow.js"></script>
+        <script src="../static/js/components/Subscribe.js"></script>
+    </body>
+
+</html>

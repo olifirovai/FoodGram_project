@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %} Friends {% endblock %}
+{% block static %}
+    <link rel="stylesheet" href="../../../static/pages/myFollow.css">
+{% endblock %}
+
+{% block content %}
+    {% load recipe_filters %}
+    <div class="main__header">
+        <h1 class="main__title">My friends</h1>
+    </div>
+    <div class="card-list">
+        {% for author in page %}
+        <div class="card-user" data-author="{{ author.author.id }}">
+        <div class="card-user__header">
+            <h2 class="card-user__title">{{ author.author.username }}</h2>
+        </div>
+        <div class="card-user__body">
+            <ul class="card-user__items">
+                {% for recipe in author.author.recipes.all|slice:":3" %}
+                    <li class="card-user__item">
+                        <div class="recipe">
+                            <img src="../../../static/images/testCardImg.png" alt="какой-то-текст" class="recipe__image">
+                            <h3 class="recipe__title">{{ recipe.name }}</h3>
+                            <p class="recipe__text"><span class="icon-time"></span> {{ recipe.cook_time }}</p>
+                        </div>
+                    </li>
+                {% endfor %}
+                <li class="card-user__item">
+                    {% if author.author.recipes.all.count > 3 %}
+                        <a href="{% url "user_profile"  author.author.username %}" class="card-user__link link">Find {{ author.author.recipes.all.count|subtract:3 }} more...</a>
+                    {% endif %}
+
+                </li>
+            </ul>
+        </div>
+        <div class="card-user__footer">
+            <button class="button button_style_light-blue button_size_auto" name="subscribe">Unfollow</button>
+        </div>
+
+    </div>
+        {% endfor %}
+    </div>
+    {% include "paginator.html" %}
+
+{% endblock content %}
