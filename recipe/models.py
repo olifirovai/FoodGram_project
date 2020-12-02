@@ -10,25 +10,30 @@ from ingredients.models import Ingredient
 from user.models import User
 
 
-class Types(models.TextChoices):
-    '''
-
-    '''
-    BREAKFAST = ('breakfast', 'breakfast',)
-    LUNCH = ('lunch', 'lunch',)
-    DINNER = ('dinner', 'dinner',)
-
-
 class RecipeManager(models.Manager):
     def get_favorite_recipes(self, user):
         return self.get_queryset().filter(author__following__user=user)
 
+    # def get_types(self, recipe):
+    #     return self.get_queryset().get(type__types__in=recipe.type)
+
 
 class Recipe(models.Model):
+    TYPE_CHOICES = (
+        ('breakfast', 'Breakfast'),
+        ('lunch', 'Lunch'),
+        ('dinner', 'Dinner'),
+    )
+    type_options = {
+        'Breakfast': ['orange', 'Breakfast'],
+        'Lunch': ['green', 'Lunch'],
+        'Dinner': ['purple', 'Dinner']
+    }
+
     name = models.CharField(max_length=200, verbose_name='recipe\'s name')
     author = models.ForeignKey(User, on_delete=models.CASCADE,
                                related_name='recipes')
-    type = MultiSelectField(choices=Types.choices, default=Types.LUNCH)
+    type = MultiSelectField(max_length=50, choices=TYPE_CHOICES)
     directions = models.TextField()
     post_date = models.DateTimeField(auto_now=True, db_index=True,
                                      verbose_name='publishing date')
@@ -53,8 +58,12 @@ class Recipe(models.Model):
                 random.choice(string.ascii_letters + string.digits) for _ in
                 range(6)
             )
-            self.slug = slugify(random_mark + '-' + self.name)
+            self.slug = slugify(self.name+ '-' + random_mark )
         super(Recipe, self).save(*args, **kwargs)
+
+    @property
+    def color(self, type):
+        return self.type_options[type][0]
 
     def __str__(self):
         return self.name[:30]

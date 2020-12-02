@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %} Create Recipe {% endblock %}
 {% block static %}
     <link rel="stylesheet" href="../../../static/pages/form.css">
@@ -12,65 +13,82 @@
     <div class="form-container">
         <form class="form" method="post" enctype="multipart/form-data">
             {% csrf_token %}
+
             <div class="form__group">
-                <label for="recipeTitle" class="form__label">Recipe title</label>
+                <label for="{{ form.name.id_for_label }}" class="form__label">Recipe title</label>
                 <div class="form__field-group">
-                    <input type="text" id="id_name" name="name" class="form__input">
-                    <span class="form__error"></span>
+                    {{ form.name|addclass:"form__input" }}
+                    {% if form.name.errors %}
+                        {% for error in form.name.errors %}
+                            <span class="form__error">{{ error|escape }}</span>
+                        {% endfor %}
+                     {% endif %}
                 </div>
             </div>
+
             <div class="form__group">
-                <p class="form__label">Теги</p>
+                <p class="form__label">{{ form.type.label }}</p>
                 <div class="form__field-group">
                     <div class="tags">
-{#                        here smth like for tag in tags bla bla bla#}
+                    {% for value, type_name in form.type.field.choices %}
                         <div class="tags__item">
-                            <input type="checkbox" name="breakfast" id="id_breakfast" class="tags__checkbox tags__checkbox_style_orange">
-                            <label for="id_breakfast" class="tags__label">Breakfast</label>
+                        {% if type_name == "Breakfast" %}
+                            <input type="checkbox" name="type" value="{{ value }}" id="id_{{ form.type.id_for_label }}" class="tags__checkbox tags__checkbox_style_orange">
+                            <label for="id_{{ value.id_for_label }}" class="tags__label">{{ type_name }}</label>
+                        {% elif type_name == "Lunch" %}
+                            <input type="checkbox" name="type" value="{{ value }}" id="id_{{ type.id_for_label }}" class="tags__checkbox tags__checkbox_style_green">
+                            <label for="id_{{ value.id_for_label }}" class="tags__label">{{ type_name }}</label>
+                        {% else %}
+                            <input type="checkbox" name="type" value="{{ value }}" id="id_{{ type.id_for_label }}" class="tags__checkbox tags__checkbox_style_purple">
+                            <label for="id_{{ value.id_for_label }}" class="tags__label">{{ type_name }}</label>
+                        {% endif %}
                         </div>
-                        <div class="tags__item">
-                            <input type="checkbox" name="lunch" id="id_lunch" class="tags__checkbox tags__checkbox_style_green" checked>
-                            <label for="id_lunch" class="tags__label">Lunch</label>
-                        </div>
-                        <div class="tags__item">
-                            <input type="checkbox" name="dinner" id="id_dinner" class="tags__checkbox tags__checkbox_style_purple" checked>
-                            <label for="id_dinner" class="tags__label">Dinner</label>
-                        </div>
+                    {% endfor %}
                     </div>
                     <span class="form__error"></span>
                 </div>
             </div>
-            <div class="form__group">
-                <label for="nameIngredient" class="form__label">Ingredients</label>
-                <div class="form__field-group">
-                    <div class="form__field-group-ingredientes">
-                        <div class="form__dropdown">
-                            <input type="text" id="nameIngredient" class="form__input">
-                            <div class="form__dropdown-items"></div>
-                        </div>
-                        <input type="number" id="cantidad" class="form__input" min="0">
-                        <label for="cantidad" class="form__label" id="cantidadVal">g</label>
-                    </div>
-                    <div class="form__field-group-ingredientes-container">
 
-                    </div>
-                    <span class="form__ingredient-link" id="addIng">Add ingredient</span>
-                    <span class="form__error"></span>
-                </div>
-            </div>
+{#            <div class="form__group">#}
+{#                <label for="nameIngredient" class="form__label">Ingredients</label>#}
+{#                <div class="form__field-group">#}
+{#                    <div class="form__field-group-ingredientes">#}
+{#                        <div class="form__dropdown">#}
+{#                            <input type="text" id="nameIngredient" class="form__input">#}
+{#                            <div class="form__dropdown-items"></div>#}
+{#                        </div>#}
+{#                        <input type="number" id="cantidad" class="form__input" min="0">#}
+{#                        <label for="cantidad" class="form__label" id="cantidadVal">g</label>#}
+{#                    </div>#}
+{#                    <div class="form__field-group-ingredientes-container">#}
+{##}
+{#                    </div>#}
+{#                    <span class="form__ingredient-link" id="addIng">Add ingredient</span>#}
+{#                    <span class="form__error"></span>#}
+{#                </div>#}
+{#            </div>#}
             <div class="form__group">
-                <label for="id_time" class="form__label">Cook time</label>
+                <label for="{{ form.cook_time.id_for_label }}" class="form__label">Cook time</label>
                 <div class="form__field-group form__field-group_time">
-                    <input type="text" id="id_time" name="name" class="form__input">
-                    <label for="id_time" class="form__label">minutes</label>
-                    <span class="form__error"></span>
+                    {{ form.cook_time|addclass:"form__input" }}
+{#                    <input type="text" id="id_time" name="name" class="form__input">#}
+                    <label for="{{ form.cook_time.id_for_label }}" class="form__label">minutes</label>
+                    {% if form.cook_time.errors %}
+                        {% for error in form.cook_time.errors %}
+                            <span class="form__error">{{ error|escape }}</span>
+                        {% endfor %}
+                     {% endif %}
                 </div>
             </div>
             <div class="form__group">
-                <label for="id_description" class="form__label">Directions</label>
+                <label for="{{ form.directions.id_for_label }}" class="form__label">Directions</label>
                 <div class="form__field-group">
-                    <textarea name="description" id="id_description" rows="8" class="form__textarea"></textarea>
-                    <span class="form__error"></span>
+                    {{ form.directions|addclass:"form__textarea" }}
+                    {% if form.directions.errors %}
+                        {% for error in form.directions.errors %}
+                            <span class="form__error">{{ error|escape }}</span>
+                        {% endfor %}
+                     {% endif %}
                 </div>
             </div>
             <div class="form__group">
@@ -85,9 +103,18 @@
                 </div>
             </div>
             <div class="form__footer">
-                <button type=submit class="button button_style_blue">Add recipe</button>
+                <button type="submit" class="button button_style_blue">Add recipe</button>
             </div>
         </form>
     </div>
 
 {% endblock content %}
+
+    {% block js %}
+        <script src="{% static 'js/config/config.js' %}"></script>
+        <script src="{% static 'js/components/Header.js' %}"></script>
+        <script src="{% static 'js/utils/debouncing.js' %}"></script>
+        <script src="{% static 'js/api/Api.js' %}"></script>
+        <script src="{% static 'js/formRecipe.js' %}"></script>
+        <script src="{% static 'js/indexAuth.js' %}"></script>
+    {% endblock js %}

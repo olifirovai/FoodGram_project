@@ -1,10 +1,10 @@
 from django.contrib import admin
-
+from import_export.admin import ImportExportModelAdmin
 from .models import User, Follow
 
 
 @admin.register(User)
-class UserAdmin(admin.ModelAdmin):
+class UserAdmin(ImportExportModelAdmin):
     list_display = ('pk', 'username', 'role', 'last_login', 'date_joined',)
     list_filter = ('last_login', 'date_joined',)
     readonly_fields = ['last_login', 'date_joined', ]

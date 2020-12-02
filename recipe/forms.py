@@ -1,7 +1,7 @@
 from django.forms import ModelForm
 
 from .models import Recipe, RecipeIngredient
-
+from django.forms import CheckboxSelectMultiple
 
 class RecipeForm(ModelForm):
     class Meta:
@@ -10,7 +10,6 @@ class RecipeForm(ModelForm):
         labels = {'name': 'Recipe title', 'type': 'Recipe type',
                   'directions': 'Directions',
                   'cook_time': 'Total cooking time', 'picture': 'Image'}
-
 
 # class IngredientForm(ModelForm):
 #     ingredient = forms.CharField(label='What is your favorite fruit?', widget=forms.Select(choices=FRUIT_CHOICES))

@@ -48,24 +48,21 @@ def index(request):
     return render(request, 'index.html', data)
 
 
-def recipe_view(request, username, recipe_id):
+def recipe_view(request, username, slug):
     author = get_object_or_404(User, username=username)
-    recipe = get_object_or_404(author.recipes, id=recipe_id)
+    recipe = get_object_or_404(author.recipes, slug=slug)
     data = {'author': author, 'recipe': recipe}
-    return render(request, 'recipe/recipeItem.html', data)
+    return render(request, 'recipe/recipe_page.html', data)
 
 
 def recipe_create(request):
     if request.method == 'POST':
         form_recipe = RecipeForm(request.POST or None, files=request.FILES or None)
-        # form_ingredients = IngredientForm(request.POST or None)
-        if form_recipe.is_valid():# and form_ingredients.is_valid():
-            # ingredients = form_ingredients.save(commit=False)
+        if form_recipe.is_valid():
             recipe = form_recipe.save(commit=False)
-            # ingredients.recipe = request
             recipe.author = request.user
             recipe.save()
-            return redirect('index')
+            return redirect('recipe', username=request.user.username, slug=recipe.slug)
     else:
         form_recipe = RecipeForm()
     return render(request, 'recipe/create_recipe.html', {'form': form_recipe})
@@ -86,6 +83,8 @@ def favorite_recipes(request):
     data = {'page': page, 'paginator': paginator}
     return render(request, 'recipe/favorite.html', data)
 
+def recipe_type():
+    types =
 
 # def add_favorite_recipe(request, username, post_id):
 #     author = get_object_or_404(User, username=username)

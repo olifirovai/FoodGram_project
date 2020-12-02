@@ -1,13 +1,19 @@
 
-    <a href="#" class="link" target="_blank"><img src="../../../static/images/testCardImg.png" alt="Какой-то текст" class="card__image"></a>
+    <a href="{% url "recipe" recipe.author.username recipe.slug %}" class="link" target="_blank"><img src="../../../static/images/testCardImg.png" alt="Какой-то текст" class="card__image"></a>
     <div class="card__body">
-        <a class="card__title link" href="#" target="_blank">{{ recipe.name }}</a>
-        {% include "recipe/recipe_tags.html" %}
-{#        <ul class="card__items">#}
-{#            <li class="card__item"><span class="badge badge_style_green">Обед</span></li>#}
-{#            <li class="card__item"><span class="badge badge_style_orange">Завтрак</span></li>#}
-{#            <li class="card__item"><span class="badge badge_style_purple">Ужин</span></li>#}
-{#        </ul>#}
+        <a class="card__title link" href="{% url "recipe" recipe.author.username recipe.slug %}" target="_blank">{{ recipe.name }}</a>
+            <ul class="card__items">
+                {% for type in recipe.type %}
+                    {% if type == 'lunch' %}
+                        <li class="card__item"><span class="badge badge_style_green">{{ type|capfirst}}</span></li>
+                    {% elif type == 'breakfast' %}
+                        <li class="card__item"><span class="badge badge_style_orange">{{ type|capfirst }}</span></li>
+                    {% else %}
+                        <li class="card__item"><span class="badge badge_style_purple">{{ type|capfirst }}</span></li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+
         <div class="card__items card__items_column">
             <p class="card__text"><span class="icon-time"></span> {{ recipe.cook_time }}</p>
             <p class="card__text"><span class="icon-user"></span> <a href= "{% url "user_profile" recipe.author.username %}" style="color: black">{{ recipe.author.username }}</a></p>

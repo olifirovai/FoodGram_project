@@ -6,7 +6,7 @@
 {% block content %}
     <div class="main__header">
         <h1 class="main__title">{{ author.username }}</h1>
-        {% include "recipe/page_tags.html" %}
+        {% include "recipe/page_types.html" %}
 
     </div>
 <!--        <p style="padding: 0 0 2em 0;"><a class="button button_style_light-blue" href="#">Подписаться на автора</a></p>-->
@@ -24,5 +24,8 @@
             </div>
         {% endfor %}
     </div>
-    {% include "paginator.html" %}
+    {% if page.has_other_pages %}
+        {% include "paginator.html" with items=page paginator=paginator %}
+    {% endif %}
+
 {% endblock content %}
