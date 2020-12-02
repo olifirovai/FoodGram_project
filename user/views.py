@@ -31,3 +31,15 @@ def follow_page(request):
     page = paginator.get_page(page_number)
     data = {'page': page, 'paginator': paginator}
     return render(request, 'user/follow_page.html', data)
+
+def follow_author(request, username):
+    author = get_object_or_404(User, username=username)
+    if request.user != author:
+        Follow.objects.get_or_create(user=request.user, author=author)
+
+def unfollow_author(request, username):
+    author = get_object_or_404(User, username=username)
+    Follow.objects.get_follow(author, request.user).delete()
+
+
+

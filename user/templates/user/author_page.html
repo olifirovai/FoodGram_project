@@ -4,22 +4,32 @@
     <link rel="stylesheet" href="../static/pages/index.css">
 {% endblock %}
 {% block content %}
+    {% load user_filters %}
     <div class="main__header">
         <h1 class="main__title">{{ author.username }}</h1>
         {% include "recipe/page_types.html" %}
 
     </div>
 <!--        <p style="padding: 0 0 2em 0;"><a class="button button_style_light-blue" href="#">Подписаться на автора</a></p>-->
+    {% if user.is_authenticated %}
     <div class="author-subscribe" data-author="323">
+    {% if author|check_following:user %}
+        <p style="padding: 0 0 2em 0;"><button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>UNFollow</button></p>
+    {% else %}
         <p style="padding: 0 0 2em 0;"><button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Follow</button></p>
+    {% endif %}
     </div>
+    {% endif %}
     <div class="card-list" >
         {% for recipe in page %}
             <div class="card" data-id="{{ recipe.id }}">
                 {% include "recipe/recipeItem.html" %}
                 <div class="card__footer">
                     <button class="button button_style_light-blue" name="purchases" data-out><span class="icon-plus button__icon"></span>Add to My Shopping List</button>
-                    <button class="button button_style_none" name="favorites" data-out><span class="icon-favorite"></span></button>
+                    {% if user.is_authenticated %}
+                        <button class="button button_style_none" name="favorites" data-out><span class="icon-favorite"></span></button>
+                    {% endif %}
+
                 </div>
             </div>
         {% endfor %}

@@ -1,31 +1,4 @@
-# from django import template
-#
-# register = template.Library()
-#
-#
-# @register.filter('duration_format')
-# def duration_format(value):
-#     value = int(value)
-#     h = 'hour'
-#     m = 'minute'
-#     hours = int(value / 60)
-#     minutes = value % 60
-#     if hours <> 1:
-#         h += 's'
-#
-#     if minutes <> 1:
-#         m += 's'
-#
-#     return '%s %s , %s %s' % (hours, h, minutes, m)
-#
-#
-# { % load
-# my_template_tags %}
-#
-# { % block
-# content %}
-# < p > {{film.title}} - {{film.duration | duration_format}} < / p >
-# { % endblock %}
+
 
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
@@ -77,14 +50,14 @@ def recipe_delete():
 
 def favorite_recipes(request):
     recipe_list = Recipe.objects.get_favorite_recipes(request.user)
-    paginator = Paginator(recipe_list, 10)
+    paginator = Paginator(recipe_list, 6)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
     data = {'page': page, 'paginator': paginator}
     return render(request, 'recipe/favorite.html', data)
 
 def recipe_type():
-    types =
+    pass
 
 # def add_favorite_recipe(request, username, post_id):
 #     author = get_object_or_404(User, username=username)

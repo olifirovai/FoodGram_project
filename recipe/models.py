@@ -12,11 +12,10 @@ from user.models import User
 
 class RecipeManager(models.Manager):
     def get_favorite_recipes(self, user):
-        return self.get_queryset().filter(author__following__user=user)
+        return self.get_queryset().filter(favorite_recipe__user=user)
 
-    # def get_types(self, recipe):
-    #     return self.get_queryset().get(type__types__in=recipe.type)
-
+    def get_certain_type(self, type):
+        return self.get_queryset().filter(type__in=type)
 
 class Recipe(models.Model):
     TYPE_CHOICES = (
@@ -58,12 +57,8 @@ class Recipe(models.Model):
                 random.choice(string.ascii_letters + string.digits) for _ in
                 range(6)
             )
-            self.slug = slugify(self.name+ '-' + random_mark )
+            self.slug = slugify(self.name + '-' + random_mark)
         super(Recipe, self).save(*args, **kwargs)
-
-    @property
-    def color(self, type):
-        return self.type_options[type][0]
 
     def __str__(self):
         return self.name[:30]

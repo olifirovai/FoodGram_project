@@ -6,6 +6,7 @@
 {% endblock %}
 
 {% block content %}
+    {% load recipe_filters %}
         <div class="single-card" data-id="{{ recipe.id }}" data-author="{{ author.id }}">
         {% load thumbnail %}
             {% thumbnail recipe.picture "480x480" crop="center" upscale=True as im %}
@@ -31,7 +32,7 @@
                 {% endfor %}
                 </ul>
                 <div class="single-card__items single-card__items_column">
-                    <p class="single-card__text"><span class="icon-time"></span> {{ recipe.cook_time }}</p>
+                    <p class="single-card__text"><span class="icon-time"></span> {{ recipe.cook_time|duration_format }}</p>
                     <ul class="single-card__items">
                         <li class="single-card__item"><p class="single-card__text"><span class="icon-user"></span> {{ author.username }}</p></li>
                         {% if user == author %}
