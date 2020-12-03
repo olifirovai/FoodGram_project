@@ -1,14 +1,10 @@
-
-from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
+from django.shortcuts import get_object_or_404, redirect, render
 
+from user.models import User
 from .forms import RecipeForm
 from .models import Recipe
-from django.core.paginator import Paginator
-from django.shortcuts import get_object_or_404, redirect, render
-from django.http import HttpResponseRedirect
-from user.models import User
 
 
 def index(request):
@@ -26,15 +22,17 @@ def recipe_view(request, username, slug):
     data = {'author': author, 'recipe': recipe}
     return render(request, 'recipe/recipe_page.html', data)
 
-
+@login_required
 def recipe_create(request):
     if request.method == 'POST':
-        form_recipe = RecipeForm(request.POST or None, files=request.FILES or None)
+        form_recipe = RecipeForm(request.POST or None,
+                                 files=request.FILES or None)
         if form_recipe.is_valid():
             recipe = form_recipe.save(commit=False)
             recipe.author = request.user
             recipe.save()
-            return redirect('recipe', username=request.user.username, slug=recipe.slug)
+            return redirect('recipe', username=request.user.username,
+                            slug=recipe.slug)
     else:
         form_recipe = RecipeForm()
     return render(request, 'recipe/recipe_form.html', {'form': form_recipe})
@@ -45,11 +43,12 @@ def recipe_edit(request, username, slug):
     recipe = get_object_or_404(author.recipes, slug=slug)
     if request.user == author:
         form = RecipeForm(request.POST or None, files=request.FILES or None,
-                        instance=recipe)
+                          instance=recipe)
         if request.method == 'POST':
             if form.is_valid():
                 recipe = form.save()
-                return redirect('recipe', username=recipe.author, slug=recipe.slug)
+                return redirect('recipe', username=recipe.author,
+                                slug=recipe.slug)
         else:
             form = RecipeForm(instance=recipe)
         data = {'form': form, 'edit': True, 'author': author, 'recipe': recipe}
@@ -68,6 +67,8 @@ def recipe_delete(request, username, slug):
         data = {'author': author, 'recipe': recipe}
         return render(request, 'recipe/recipe_delete.html', data)
 
+
+@login_required
 def favorite_recipes(request):
     recipe_list = Recipe.objects.get_favorite_recipes(request.user)
     paginator = Paginator(recipe_list, 6)
@@ -76,8 +77,10 @@ def favorite_recipes(request):
     data = {'page': page, 'paginator': paginator}
     return render(request, 'recipe/favorite.html', data)
 
+
 def recipe_type():
     pass
+
 
 # def add_favorite_recipe(request, username, post_id):
 #     author = get_object_or_404(User, username=username)

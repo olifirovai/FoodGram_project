@@ -1,12 +1,12 @@
 {% load recipe_filters user_filters %}
 
-<a href="{% url "recipe" recipe.author.username recipe.slug %}" class="link" target="_blank">
+<a href="{% url "recipe" recipe.author.username recipe.slug %}" class="link" target="_self">
 {% load thumbnail %}
     {% thumbnail recipe.picture "364x240" crop="center" upscale=True as im %}
         <img src="{{ im.url }}" alt="{{ recipe.name }}" class="card__image" width="364" height="240"></a>
 {% endthumbnail %}
 <div class="card__body">
-    <a class="card__title link" href="{% url "recipe" recipe.author.username recipe.slug %}" target="_blank">{{ recipe.name }}</a>
+    <a class="card__title link" href="{% url "recipe" recipe.author.username recipe.slug %}" target="_self">{{ recipe.name }}</a>
         <ul class="card__items">
             {% for type in recipe.type %}
                 {% if type == 'lunch' %}

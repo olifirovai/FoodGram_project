@@ -6,25 +6,27 @@
 {% endblock %}
 
 {% block content %}
-
-    <div class="main__header">
-        <h1 class="main__title">My Favorite Recipes</h1>
-            {% include "recipe/page_types.html" %}
-    </div>
-    <div class="card-list" >
-        {% for recipe in page %}
-            <div class="card" data-id="{{ recipe.id }}">
-                {% include "recipe/recipeItem.html" %}
-                <div class="card__footer">
-                    <button class="button button_style_light-blue" name="purchases" data-out><span class="icon-plus button__icon"></span>Add to My Shopping List</button>
-                    <button class="button button_style_none" name="favorites" data-out><span class="icon-favorite"></span></button>
+{% include "nav.html" %}
+    <main class="main container">
+        <div class="main__header">
+            <h1 class="main__title">My Favorite Recipes</h1>
+                {% include "recipe/page_types.html" %}
+        </div>
+        <div class="card-list" >
+            {% for recipe in page %}
+                <div class="card" data-id="{{ recipe.id }}">
+                    {% include "recipe/recipeItem.html" %}
+                    <div class="card__footer">
+                        <button class="button button_style_light-blue" name="purchases" data-out><span class="icon-plus button__icon"></span>Add to My Shopping List</button>
+                        <button class="button button_style_none" name="favorites" data-out><span class="icon-favorite"></span></button>
+                    </div>
                 </div>
-            </div>
-        {% endfor %}
-    </div>
-    {% if page.has_other_pages %}
-        {% include "paginator.html" with items=page paginator=paginator %}
-    {% endif %}
+            {% endfor %}
+        </div>
+        {% if page.has_other_pages %}
+            {% include "paginator.html" with items=page paginator=paginator %}
+        {% endif %}
+    </main>
 {% endblock content %}
 
 {% block js %}

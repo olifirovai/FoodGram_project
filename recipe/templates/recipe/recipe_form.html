@@ -6,6 +6,8 @@
 {% endblock %}
 {% load user_filters %}
 {% block content %}
+{% include "nav.html" %}
+<main class="main container">
 
     <div class="main__header">
         <h1 class="main__title">{% if edit %} Edit or Delete Recipe {% else %}Create Recipe {% endif %}</h1>
@@ -33,13 +35,16 @@
                     {% for value, type_name in form.type.field.choices %}
                         <div class="tags__item">
                         {% if type_name == "Breakfast" %}
-                            <input type="checkbox" name="type" value="{{ value }}" id="id_{{ form.type.id_for_label }}" class="tags__checkbox tags__checkbox_style_orange">
+                            <input type="checkbox" name="type" value="{{ value }}" id="id_{{ form.type.id_for_label }}" class="tags__checkbox tags__checkbox_style_orange"
+                                    {% if edit %} {% if value in recipe.type %} checked {% endif %}{% endif %}>
                             <label for="id_{{ value.id_for_label }}" class="tags__label">{{ type_name }}</label>
                         {% elif type_name == "Lunch" %}
-                            <input type="checkbox" name="type" value="{{ value }}" id="id_{{ type.id_for_label }}" class="tags__checkbox tags__checkbox_style_green">
+                            <input type="checkbox" name="type" value="{{ value }}" id="id_{{ type.id_for_label }}" class="tags__checkbox tags__checkbox_style_green"
+                                    {% if edit %} {% if value in recipe.type %} checked {% endif %}{% endif %}>
                             <label for="id_{{ value.id_for_label }}" class="tags__label">{{ type_name }}</label>
                         {% else %}
-                            <input type="checkbox" name="type" value="{{ value }}" id="id_{{ type.id_for_label }}" class="tags__checkbox tags__checkbox_style_purple">
+                            <input type="checkbox" name="type" value="{{ value }}" id="id_{{ type.id_for_label }}" class="tags__checkbox tags__checkbox_style_purple"
+                                {% if edit %} {% if value in recipe.type %} checked {% endif %}{% endif %}>
                             <label for="id_{{ value.id_for_label }}" class="tags__label">{{ type_name }}</label>
                         {% endif %}
                         </div>
@@ -49,24 +54,24 @@
                 </div>
             </div>
 
-{#            <div class="form__group">#}
-{#                <label for="nameIngredient" class="form__label">Ingredients</label>#}
-{#                <div class="form__field-group">#}
-{#                    <div class="form__field-group-ingredientes">#}
-{#                        <div class="form__dropdown">#}
-{#                            <input type="text" id="nameIngredient" class="form__input">#}
-{#                            <div class="form__dropdown-items"></div>#}
-{#                        </div>#}
-{#                        <input type="number" id="cantidad" class="form__input" min="0">#}
-{#                        <label for="cantidad" class="form__label" id="cantidadVal">g</label>#}
-{#                    </div>#}
-{#                    <div class="form__field-group-ingredientes-container">#}
-{##}
-{#                    </div>#}
-{#                    <span class="form__ingredient-link" id="addIng">Add ingredient</span>#}
-{#                    <span class="form__error"></span>#}
-{#                </div>#}
-{#            </div>#}
+            <div class="form__group">
+                <label for="nameIngredient" class="form__label">Ingredients</label>
+                <div class="form__field-group">
+                    <div class="form__field-group-ingredientes">
+                        <div class="form__dropdown">
+                            <input type="text" id="nameIngredient" class="form__input">
+                            <div class="form__dropdown-items"></div>
+                        </div>
+                        <input type="number" id="cantidad" class="form__input" min="0">
+                        <label for="cantidad" class="form__label" id="cantidadVal">g</label>
+                    </div>
+                    <div class="form__field-group-ingredientes-container">
+
+                    </div>
+                    <span class="form__ingredient-link" id="addIng">Add ingredient</span>
+                    <span class="form__error"></span>
+                </div>
+            </div>
             <div class="form__group">
                 <label for="{{ form.cook_time.id_for_label }}" class="form__label">Cook time</label>
                 <div class="form__field-group form__field-group_time">
@@ -113,7 +118,7 @@
             </div>
         </form>
     </div>
-
+</main>
 {% endblock content %}
 
 {% block js %}

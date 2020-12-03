@@ -6,43 +6,44 @@
 {% endblock %}
 {% block content %}
 {% load user_filters %}
+{% include "nav.html" %}
+    <main class="main container">
 
+        <div class="main__header">
+            <h1 class="main__title">Sign Up</h1>
+        </div>
+        <div class="form-container">
+            <form class="form" method="post" action="{% url "signup" %}">
+                {% csrf_token %}
+                {% for field in form %}
 
-    <div class="main__header">
-        <h1 class="main__title">Sign Up</h1>
-    </div>
-    <div class="form-container">
-        <form class="form" method="post" action="{% url "signup" %}">
-            {% csrf_token %}
-            {% for field in form %}
+                    <div class="form__group">
+                        <label for="{{ field.id_for_label }}" class="form__label">
+                            {{ field.label }}
+                            {% if field.field.required %}
+                                <span class="form__error">*</span>
+                            {% endif %}
+                        </label>
+                        <div class="form__field-group">
+                            {{ field|addclass:"form__input" }}
 
-                <div class="form__group">
-                    <label for="{{ field.id_for_label }}" class="form__label">
-                        {{ field.label }}
-                        {% if field.field.required %}
-                            <span class="form__error">*</span>
-                        {% endif %}
-                    </label>
-                    <div class="form__field-group">
-                        {{ field|addclass:"form__input" }}
+                            {% if form.errors %}
+                                {% for error in field.errors %}
+                                    <span class="form__error">{{ error|escape }}</span>
+                                {% endfor %}
+                             {% endif %}
 
-                        {% if form.errors %}
-                            {% for error in field.errors %}
-                                <span class="form__error">{{ error|escape }}</span>
-                            {% endfor %}
-                         {% endif %}
-
-                        {% if field.help_text %}
-                            <span class="form__input-info" id="{{ field.id_for_label }}-help">{{ field.help_text|safe }} </span>
-                        {% endif %}
+                            {% if field.help_text %}
+                                <span class="form__input-info" id="{{ field.id_for_label }}-help">{{ field.help_text|safe }} </span>
+                            {% endif %}
+                        </div>
                     </div>
+
+                {% endfor %}
+                <div class="form__footer">
+                    <button type="submit" class="button button_style_blue">Create my account</button>
                 </div>
-
-            {% endfor %}
-            <div class="form__footer">
-                <button type="submit" class="button button_style_blue">Create my account</button>
-            </div>
-        </form>
-    </div>
-
+            </form>
+        </div>
+    </main>
 {% endblock content %}

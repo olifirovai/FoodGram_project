@@ -23,16 +23,17 @@ class RecipeAdminList(ChangeList):
         self.search_fields = ('name', 'post_date', 'type',)
         self.empty_value_display = '-empty-'
 
+class RecipeIngredientInLine(admin.TabularInline):
+    model = Recipe.ingredients.through
+    extra = 3
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
-
-    def get_changelist(self, request, **kwargs):
-        return RecipeAdminList
-
-    def get_changelist_form(self, request, **kwargs):
-        return RecipeForm
-
+    inlines = (RecipeIngredientInLine,)
+    list_display = ['name', 'author', 'post_date', 'type']
+    list_display_links = ['name']
+    search_fields = ('name', 'post_date', 'type',)
+    empty_value_display = '-empty-'
 
 @admin.register(RecipeIngredient)
 class RecipeIngredientAdmin(admin.ModelAdmin):

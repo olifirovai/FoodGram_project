@@ -30,6 +30,7 @@ def user_profile(request, username):
     return render(request, 'user/author_page.html', data)
 
 
+@login_required
 def follow_page(request):
     follow_list = Follow.objects.get_follow_list(request.user)
     paginator = Paginator(follow_list, 6)
@@ -37,7 +38,6 @@ def follow_page(request):
     page = paginator.get_page(page_number)
     data = {'page': page, 'paginator': paginator}
     return render(request, 'user/follow_page.html', data)
-
 
 
 @login_required
@@ -56,7 +56,7 @@ def follow_author(request):
 def unfollow_author(request, id):
     author = get_object_or_404(User, id=id)
     data = {'success': 'true'}
-    follow = Follow.objects.filter(user=request.user, author=author)
+    follow = Follow.objects.get_follow(author, request.user)
     if not follow:
         data['success'] = 'false'
     follow.delete()
