@@ -1,6 +1,12 @@
+import json
+
+from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse_lazy
+from django.views.decorators.http import (require_http_methods,
+                                          require_POST, )
 from django.views.generic import CreateView
 
 from .forms import CreationForm
@@ -16,7 +22,7 @@ class SignUpView(CreateView):
 def user_profile(request, username):
     author = get_object_or_404(User, username=username)
     recipe = author.recipes.filter(author=author)
-    paginator = Paginator(recipe, 5)
+    paginator = Paginator(recipe, 6)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
     data = {'author': author, 'paginator': paginator,
@@ -32,14 +38,26 @@ def follow_page(request):
     data = {'page': page, 'paginator': paginator}
     return render(request, 'user/follow_page.html', data)
 
-def follow_author(request, username):
-    author = get_object_or_404(User, username=username)
+
+
+@login_required
+@require_POST
+def follow_author(request):
+    author_id = int(json.loads(request.body).get('id'))
+    author = get_object_or_404(User, pk=author_id)
     if request.user != author:
         Follow.objects.get_or_create(user=request.user, author=author)
-
-def unfollow_author(request, username):
-    author = get_object_or_404(User, username=username)
-    Follow.objects.get_follow(author, request.user).delete()
+    data = {'success': 'true'}
+    return JsonResponse(data)
 
 
-
+@login_required
+@require_http_methods('DELETE')
+def unfollow_author(request, id):
+    author = get_object_or_404(User, id=id)
+    data = {'success': 'true'}
+    follow = Follow.objects.filter(user=request.user, author=author)
+    if not follow:
+        data['success'] = 'false'
+    follow.delete()
+    return JsonResponse(data)

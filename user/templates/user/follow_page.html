@@ -1,44 +1,47 @@
 {% extends "base.html" %}
 {% block title %} Friends {% endblock %}
+{% load static %}
 {% block static %}
-    <link rel="stylesheet" href="../../../static/pages/myFollow.css">
+    <link rel="stylesheet" href="{% static "/pages/myFollow.css" %}">
 {% endblock %}
 
 {% block content %}
-    {% load recipe_filters %}
+    {% load recipe_filters user_filters %}
     <div class="main__header">
         <h1 class="main__title">My friends</h1>
     </div>
     <div class="card-list">
-        {% for author in page %}
-        <div class="card-user" data-author="{{ author.author.id }}">
-        <div class="card-user__header">
-            <h2 class="card-user__title">{{ author.author.username }}</h2>
-        </div>
-        <div class="card-user__body">
-            <ul class="card-user__items">
-                {% for recipe in author.author.recipes.all|slice:":3" %}
-                    <li class="card-user__item">
-                        <div class="recipe">
-                            <img src="../../../static/images/testCardImg.png" alt="какой-то-текст" class="recipe__image">
-                            <h3 class="recipe__title">{{ recipe.name }}</h3>
-                            <p class="recipe__text"><span class="icon-time"></span> {{ recipe.cook_time }}</p>
-                        </div>
-                    </li>
-                {% endfor %}
-                <li class="card-user__item">
-                    {% if author.author.recipes.all.count > 3 %}
-                        <a href="{% url "user_profile"  author.author.username %}" class="card-user__link link">Find {{ author.author.recipes.all.count|subtract:3 }} more...</a>
-                    {% endif %}
+        {% for item in page %}
+            <div class="card-user" data-author="{{ item.author.id }}">
+                <div class="card-user__header">
+                    <h2 class="card-user__title">{{ item.author|author_name }} </h2>
+                </div>
+                <div class="card-user__body">
+                    <ul class="card-user__items">
+                        {% for recipe in item.author.recipes.all|slice:":3" %}
+                            <li class="card-user__item">
+                                <div class="recipe">
+                                    {% load thumbnail %}
+                                        {% thumbnail recipe.picture "72x72" crop="center" upscale=True as im %}
+                                            <img class="recipe__image" src="{{ im.url }}" alt="{{ recipe.name }}" width="72" height="72">
+                                    {% endthumbnail %}
+                                    <h3 class="recipe__title">{{ recipe.name }}</h3>
+                                    <p class="recipe__text"><span class="icon-time"></span> {{ recipe.cook_time|duration_format }}</p>
+                                </div>
+                            </li>
+                        {% endfor %}
+                        <li class="card-user__item">
+                            {% if item.author.recipes.all.count > 3 %}
+                                <a href="{% url "user_profile"  item.author.username %}" class="card-user__link link">Find {{ item.author.recipes.all.count|subtract:3 }} more...</a>
+                            {% endif %}
 
-                </li>
-            </ul>
-        </div>
-        <div class="card-user__footer">
-            <button class="button button_style_light-blue button_size_auto" name="subscribe">Unfollow</button>
-        </div>
-
-    </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-user__footer">
+                    <button class="button button_style_light-blue button_size_auto" name="subscribe">Unfollow</button>
+                </div>
+            </div>
         {% endfor %}
     </div>
     {% if page.has_other_pages %}
@@ -47,3 +50,14 @@
 
 
 {% endblock content %}
+{% block js %}
+    {% load static %}
+        <script src="{% static "js/config/config.js" %}"></script>
+        <script src="{% static "js/components/MainCards.js" %}"></script>
+        <script src="{% static "js/myFollow.js" %}"></script>
+        <script src="{% static "js/components/Subscribe.js" %}"></script>
+        <script src="{% static "js/components/Header.js" %}"></script>
+        <script src="{% static "js/api/Api.js" %}"></script>
+        <script src="{% static "js/myFollow.js" %}"></script>
+
+{% endblock js %}

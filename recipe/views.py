@@ -1,5 +1,4 @@
 
-
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
@@ -38,15 +37,36 @@ def recipe_create(request):
             return redirect('recipe', username=request.user.username, slug=recipe.slug)
     else:
         form_recipe = RecipeForm()
-    return render(request, 'recipe/create_recipe.html', {'form': form_recipe})
+    return render(request, 'recipe/recipe_form.html', {'form': form_recipe})
 
 
-def recipe_edit():
-    pass
+def recipe_edit(request, username, slug):
+    author = get_object_or_404(User, username=username)
+    recipe = get_object_or_404(author.recipes, slug=slug)
+    if request.user == author:
+        form = RecipeForm(request.POST or None, files=request.FILES or None,
+                        instance=recipe)
+        if request.method == 'POST':
+            if form.is_valid():
+                recipe = form.save()
+                return redirect('recipe', username=recipe.author, slug=recipe.slug)
+        else:
+            form = RecipeForm(instance=recipe)
+        data = {'form': form, 'edit': True, 'author': author, 'recipe': recipe}
+        return render(request, 'recipe/recipe_form.html', data)
+    else:
+        return redirect('recipe', username=author, slug=recipe.slug)
 
 
-def recipe_delete():
-    pass
+def recipe_delete(request, username, slug):
+    author = get_object_or_404(User, username=username)
+    recipe = get_object_or_404(author.recipes, slug=slug)
+    if request.user == author:
+        if request.method == 'POST':
+            recipe.delete()
+            return redirect('user_profile', username=username)
+        data = {'author': author, 'recipe': recipe}
+        return render(request, 'recipe/recipe_delete.html', data)
 
 def favorite_recipes(request):
     recipe_list = Recipe.objects.get_favorite_recipes(request.user)

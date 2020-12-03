@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% block title %} Edit recipe {% endblock %}
 {% block content %}
-
+{% load static %}
     <div class="main__header">
-        <h1 class="main__title">Редактирование рецепта</h1>
+        <h1 class="main__title">Edit recipe</h1>
     </div>
     <div class="form-container">
         <form class="form">
@@ -95,6 +95,15 @@
         </form>
     </div>
 
-
-
 {% endblock content %}
+
+{% block js %}
+    {% load static %}
+        <script src="{% static "js/config/config.js" %}"></script>
+
+        <script src="{% static "js/utils/debouncing.js" %}"></script>
+        <script src="{% static "js/components/Header.js" %}"></script>
+
+        <script src="{% static "js/api/Api.js" %}"></script>
+        <script src="{% static "js/formRecipe.js" %}"></script>
+{% endblock js %}

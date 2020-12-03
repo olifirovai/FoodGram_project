@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block content %}
-    {% load recipe_filters %}
+    {% load recipe_filters user_filters %}
         <div class="single-card" data-id="{{ recipe.id }}" data-author="{{ author.id }}">
         {% load thumbnail %}
             {% thumbnail recipe.picture "480x480" crop="center" upscale=True as im %}
@@ -17,7 +17,7 @@
                     <h1 class="single-card__title">{{ recipe.name }}</h1>
                     <div class="single-card__favorite">
                         <button class="button button_style_none" name="favorites" data-out><span class="icon-favorite icon-favorite_big"></span></button>
-                        <div class="single-card__favorite-tooltip tooltip">Добавить в избранное</div>
+                        <div class="single-card__favorite-tooltip tooltip">Add to favorite</div>
                     </div>
                 </div>
                 <ul class="single-card__items">
@@ -34,16 +34,20 @@
                 <div class="single-card__items single-card__items_column">
                     <p class="single-card__text"><span class="icon-time"></span> {{ recipe.cook_time|duration_format }}</p>
                     <ul class="single-card__items">
-                        <li class="single-card__item"><p class="single-card__text"><span class="icon-user"></span> {{ author.username }}</p></li>
+                        <li class="single-card__item"><p class="single-card__text"><span class="icon-user"></span> {{ author|author_name }}</p></li>
                         {% if user == author %}
-                        <li class="single-card__item">  <a style="margin-left: 2.5em" href="#" class="single-card__text">Редактировать рецепт</a></li>
+                        <li class="single-card__item">  <a style="margin-left: 2.5em" href="{% url "edit_recipe" recipe.author.username recipe.slug  %}" class="single-card__text">Edit recipe</a></li>
                         {% endif %}
                     </ul>
                 </div>
                 <ul class="single-card__items">
-                    <li class="single-card__item"><button class="button button_style_blue" name="purchases" data-out><span class="icon-plus"></span> Добавить в покупки</button></li>
+                    <li class="single-card__item"><button class="button button_style_blue" name="purchases" data-out><span class="icon-plus"></span> Add to my shopping list</button></li>
                     {% if user.is_authenticated and user != author %}
-                    <li class="single-card__item"><button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Подписаться на автора</button></li>
+                        {% if author|check_following:user %}
+                            <li class="single-card__item"><button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Unfollow</button></li>
+                        {% else %}
+                            <li class="single-card__item"><button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Follow</button></li>
+                        {% endif %}
                     {% endif %}
                 </ul>
 {#                <div class="single-card__section">#}
@@ -66,3 +70,19 @@
 
 
 {% endblock content %}
+
+{% block js %}
+    {% load static %}
+        <script src="{% static "js/config/config.js" %}"></script>
+        <script src="{% static "js/components/MainCards.js" %}"></script>
+        <script src="{% static "js/components/Subscribe.js" %}"></script>
+
+        <script src="{% static "js/components/Purchases.js" %}"></script>
+        <script src="{% static "js/components/Favorites.js" %}"></script>
+
+        <script src="{% static "js/components/Header.js" %}"></script>
+
+        <script src="{% static "js/api/Api.js" %}"></script>
+        <script src="{% static "js/components/SingleCard.js" %}"></script>
+        <script src="{% static "js/singlePage.js" %}"></script>
+{% endblock js %}

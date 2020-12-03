@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 {% block title %} Recipes {% endblock %}
-
+{% load static %}
 {% block static %}
-    <link rel="stylesheet" href="../static/pages/index.css">
+    <link rel="stylesheet" href="{% static "/pages/index.css" %}">
 {% endblock %}
 
 {% block content %}
 
     <div class="main__header">
-        <h1 class="main__title">Рецепты</h1>
+        <h1 class="main__title">Recipes</h1>
     {% include "recipe/page_types.html" %}
     </div>
     <div class="card-list">

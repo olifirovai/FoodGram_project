@@ -1,5 +1,10 @@
-{% load recipe_filters %}
-<a href="{% url "recipe" recipe.author.username recipe.slug %}" class="link" target="_blank"><img src="../../../static/images/testCardImg.png" alt="Какой-то текст" class="card__image"></a>
+{% load recipe_filters user_filters %}
+
+<a href="{% url "recipe" recipe.author.username recipe.slug %}" class="link" target="_blank">
+{% load thumbnail %}
+    {% thumbnail recipe.picture "364x240" crop="center" upscale=True as im %}
+        <img src="{{ im.url }}" alt="{{ recipe.name }}" class="card__image" width="364" height="240"></a>
+{% endthumbnail %}
 <div class="card__body">
     <a class="card__title link" href="{% url "recipe" recipe.author.username recipe.slug %}" target="_blank">{{ recipe.name }}</a>
         <ul class="card__items">
@@ -16,7 +21,7 @@
 
     <div class="card__items card__items_column">
         <p class="card__text"><span class="icon-time"></span> {{ recipe.cook_time|duration_format }}</p>
-        <p class="card__text"><span class="icon-user"></span> <a href= "{% url "user_profile" recipe.author.username %}" style="color: black">{{ recipe.author.username }}</a></p>
+        <p class="card__text"><span class="icon-user"></span> <a href= "{% url "user_profile" recipe.author.username %}" style="color: black">{{ recipe.author|author_name }}</a></p>
     </div>
 </div>
 

@@ -1,5 +1,7 @@
 from django import template
+
 from recipe.models import Recipe
+
 register = template.Library()
 
 
@@ -7,11 +9,11 @@ register = template.Library()
 def subtract(value, arg):
     return value - arg
 
+
 @register.filter('recipe_type')
 def filter_types(type):
     recipe_list = Recipe.objects.get_certain_type(type)
     return recipe_list
-
 
 
 @register.filter('duration_format')
@@ -28,5 +30,6 @@ def duration_format(value):
 
     if hours == 0:
         return f'{minutes} {m}'
+    elif minutes == 0:
+        return f'{hours} {h}'
     return f'{hours} {h}, {minutes} {m}'
-

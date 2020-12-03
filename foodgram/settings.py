@@ -113,3 +113,9 @@ AUTH_USER_MODEL = 'user.User'
 LOGIN_REDIRECT_URL = reverse_lazy('index')
 
 LOGOUT_REDIRECT_URL = reverse_lazy('index')
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    }
+}

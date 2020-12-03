@@ -17,6 +17,7 @@ class RecipeManager(models.Manager):
     def get_certain_type(self, type):
         return self.get_queryset().filter(type__in=type)
 
+
 class Recipe(models.Model):
     TYPE_CHOICES = (
         ('breakfast', 'Breakfast'),
@@ -41,7 +42,8 @@ class Recipe(models.Model):
         validators=[MinValueValidator(1)], default=10,
         help_text='Add cook time in minutes'
     )
-    picture = models.ImageField(verbose_name='picture of the recipe',
+    picture = models.ImageField(upload_to='recipe/',
+                                verbose_name='picture of the recipe',
                                 blank=True, null=True)
     slug = models.SlugField(max_length=250, unique=True)
     objects = RecipeManager()

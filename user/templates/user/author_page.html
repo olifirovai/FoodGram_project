@@ -1,24 +1,29 @@
 {% extends "base.html" %}
-{% block title %} Recipes by {{ author.username }}{% endblock %}
+{% load user_filters %}
+{% block title %} Recipes by {{ author|author_name}}{% endblock %}
+{% load static %}
 {% block static %}
-    <link rel="stylesheet" href="../static/pages/index.css">
+    <link rel="stylesheet" href="{% static "/pages/index.css" %}">
 {% endblock %}
 {% block content %}
-    {% load user_filters %}
     <div class="main__header">
-        <h1 class="main__title">{{ author.username }}</h1>
+        {% if user.is_authenticated and user == author%}
+            <h1 class="main__title">My Page</h1>
+        {% else %}
+            <h1 class="main__title">{{ author|author_name }}</h1>
+        {% endif %}
         {% include "recipe/page_types.html" %}
 
     </div>
-<!--        <p style="padding: 0 0 2em 0;"><a class="button button_style_light-blue" href="#">Подписаться на автора</a></p>-->
-    {% if user.is_authenticated %}
-    <div class="author-subscribe" data-author="323">
-    {% if author|check_following:user %}
-        <p style="padding: 0 0 2em 0;"><button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>UNFollow</button></p>
-    {% else %}
-        <p style="padding: 0 0 2em 0;"><button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Follow</button></p>
-    {% endif %}
-    </div>
+
+    {% if user.is_authenticated and user != author %}
+        <div class="author-subscribe" data-author="{{ author.id }}">
+            {% if author|check_following:user %}
+                <p style="padding: 0 0 2em 0;"><button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Unfollow</button></p>
+            {% else %}
+                <p style="padding: 0 0 2em 0;"><button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Follow</button></p>
+            {% endif %}
+        </div>
     {% endif %}
     <div class="card-list" >
         {% for recipe in page %}
@@ -39,3 +44,20 @@
     {% endif %}
 
 {% endblock content %}
+
+{% block js %}
+    {% load static %}
+        <script src="{% static "js/config/config.js" %}"></script>
+        <script src="{% static "js/components/MainCards.js" %}"></script>
+
+        <script src="{% static "js/components/Purchases.js" %}"></script>
+        <script src="{% static "js/components/Favorites.js" %}"></script>
+
+        <script src="{% static "js/components/Header.js" %}"></script>
+
+        <script src="{% static "js/api/Api.js" %}"></script>
+        <script src="{% static "js/components/Subscribe.js" %}"></script>
+        <script src="{% static "js/components/AuthorRecipe.js" %}"></script>
+        <script src="{% static "js/authorRecipe.js" %}"></script>
+
+{% endblock js %}
