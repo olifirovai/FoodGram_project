@@ -1,3 +1,4 @@
+{# TODO unfollow button on this page doesn't work#}
 {% extends "base.html" %}
 {% block title %} Friends {% endblock %}
 {% load static %}
@@ -40,6 +41,7 @@
                             </li>
                         </ul>
                     </div>
+
                     <div class="card-user__footer">
                         <button class="button button_style_light-blue button_size_auto" name="subscribe">Unfollow</button>
                     </div>
@@ -71,7 +73,7 @@
             <script src="{% static "js/singlePage.js" %}"></script>
             <script src="{% static "js/indexAuth.js" %}"></script>
         {% else %}
-            <script src="{% static "js/singleNotPage.js" %}"></script>
+            <script src="{% static "jssinglePageNotAuth.js" %}"></script>
             <script src="{% static "js/indexNotAuth.js" %}"></script>
         {% endif %}
 

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load user_filters %}
+{% load user_filters recipe_filters %}
 {% block title %} Recipes by {{ author|author_name}}{% endblock %}
 {% load static %}
 {% block static %}
@@ -32,9 +32,18 @@
                 <div class="card" data-id="{{ recipe.id }}">
                     {% include "recipe/recipeItem.html" %}
                     <div class="card__footer">
-                        <button class="button button_style_light-blue" name="purchases" data-out><span class="icon-plus button__icon"></span>Add to My Shopping List</button>
+                        {% if user|check_in_shopping:recipe %}
+                            <button class="button button_style_light-blue-outline" name="purchases" data-out><span class="icon-check button__icon"></span> Recipe added</button>
+                        {% else %}
+                            <button class="button button_style_light-blue" name="purchases" data-out><span class="icon-plus button__icon"></span>Add to my shopping list</button>
+                        {% endif %}
+
                         {% if user.is_authenticated %}
-                            <button class="button button_style_none" name="favorites" data-out><span class="icon-favorite"></span></button>
+                            {% if user|check_favorite:recipe %}
+                                <button class="button button_style_none" name="favorites" data-out><span class="icon-favorite icon-favorite_active"></span></button>
+                            {% else %}
+                                <button class="button button_style_none" name="favorites" data-out><span class="icon-favorite"></span></button>
+                            {% endif %}
                         {% endif %}
 
                     </div>
@@ -66,7 +75,7 @@
             <script src="{% static "js/singlePage.js" %}"></script>
             <script src="{% static "js/indexAuth.js" %}"></script>
         {% else %}
-            <script src="{% static "js/singleNotPage.js" %}"></script>
+            <script src="{% static "js/singlePageNotAuth.js" %}"></script>
             <script src="{% static "js/indexNotAuth.js" %}"></script>
         {% endif %}
 

@@ -1,0 +1,50 @@
+{# TODO remove button on this page doesn't work#}
+{% extends "base.html" %}
+{% block title %} Recipes {% endblock %}
+{% load static %}
+{% block static %}
+    <link rel="stylesheet" href="{% static "/pages/shopList.css" %}">
+{% endblock %}
+
+{% block content %}
+{% include "nav.html" with active_page="shopping_list" %}
+{% load recipe_filters %}
+{% csrf_token %}
+<main class="main container">
+    <div class="main__header">
+        <h1 class="main__title">My shopping list</h1>
+{#    <a href="#"><button class="button button_style_blue">Download whole shopping list</button></a>#}
+    </div>
+    <div class="card-list card-list_column">
+        <ul class="shopping-list">
+            {% for list in shopping_list %}
+                <li class="shopping-list__item" data-id="{{ list.recipe.id }}">
+                    <div class="recipe recipe_reverse">
+                        {% load thumbnail %}
+                        {% thumbnail list.recipe.picture "364x240" crop="center" upscale=True as im %}
+                            <img src="{{ im.url }}" alt="{{ list.recipe.name }}" class="recipe__image recipe__image_big" width="364" height="240"></a>
+                        {% endthumbnail %}
+                        <h3 class="recipe__title">{{ list.recipe.name }}</h3>
+                        <p class="recipe__text"><span class="icon-time"></span> {{ list.recipe.cook_time|duration_format }}</p>
+                    </div>
+                    <a href="{% url "remove_purchase" list.recipe.id %}" class="shopping-list__button link">Remove </a>
+                </li>
+            {% endfor %}
+        </ul>
+{#        <a href="#"><button class="button button_style_blue">Download recipe's shopping list</button></a>#}
+        <a href="#"><button class="button button_style_blue">Download shopping list</button></a>
+
+    </div>
+</main>
+{% endblock content %}
+
+{% block js %}
+    {% load static %}
+    <script src="{% static "js/config/config.js" %}"></script>
+    <script src="{% static "js/components/Header.js" %}"></script>
+
+    <script src="{% static "js/api/Api.js" %}"></script>
+    <script src="{% static "js/shopList.js" %}"></script>
+    <script src="{% static "js/components/ShopList.js" %}"></script>
+
+{% endblock js %}

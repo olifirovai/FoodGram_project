@@ -16,13 +16,20 @@
             <img class="single-card__image" src="{{ im.url }}" alt="{{ recipe.name }}" width="480" height="480">
         {% endthumbnail %}
         <div class="single-card__info">
-            <div class="single-card__header-info">
-                <h1 class="single-card__title">{{ recipe.name }}</h1>
-                <div class="single-card__favorite">
-                    <button class="button button_style_none" name="favorites" data-out><span class="icon-favorite icon-favorite_big"></span></button>
-                    <div class="single-card__favorite-tooltip tooltip">Add to favorite</div>
+            {% if user.is_authenticated %}
+                <div class="single-card__header-info">
+                    <h1 class="single-card__title">{{ recipe.name }}</h1>
+                    <div class="single-card__favorite">
+
+                    {% if user|check_favorite:recipe %}
+                        <button class="button button_style_none" name="favorites" data-out><span class="icon-favorite icon-favorite_big icon-favorite_active"></span></button>
+                    {% else %}
+                        <button class="button button_style_none" name="favorites" data-out><span class="icon-favorite icon-favorite_big"></span></button>
+                    {% endif %}
+
+                    </div>
                 </div>
-            </div>
+            {% endif %}
             <ul class="single-card__items">
             {% for type in recipe.type %}
                 {% if type == 'lunch' %}
@@ -39,19 +46,27 @@
                 <ul class="single-card__items">
                     <li class="single-card__item"><p class="single-card__text"><span class="icon-user"></span> <a style="color: black" href="{% url "user_profile" author.username %}" target="_self">{{ author|author_name }}</a></p></li>
                     {% if user == author %}
-                    <li class="single-card__item">  <a style="margin-left: 2.5em" href="{% url "edit_recipe" recipe.author.username recipe.slug  %}" class="single-card__text">Edit recipe</a></li>
+                        <li class="single-card__item">  <a style="margin-left: 2.5em" href="{% url "edit_recipe" recipe.author.username recipe.slug  %}" class="single-card__text">Edit recipe</a></li>
                     {% endif %}
                 </ul>
             </div>
             <ul class="single-card__items">
-                <li class="single-card__item"><button class="button button_style_blue" name="purchases" data-out><span class="icon-plus"></span> Add to my shopping list</button></li>
-                {% if user.is_authenticated and user != author %}
-                    {% if author|check_following:user %}
-                        <li class="single-card__item"><button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Unfollow</button></li>
+                <li class="single-card__item">
+                    {% if user|check_in_shopping:recipe %}
+                        <button class="button button_style_light-blue-outline" name="purchases" data-out><span class="icon-check button__icon"></span> Recipe added</button>
                     {% else %}
-                        <li class="single-card__item"><button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Follow</button></li>
+                        <button class="button button_style_blue" name="purchases" data-out><span class="icon-plus button__icon"></span>Add to my shopping list</button>
                     {% endif %}
-                {% endif %}
+                </li>
+                <li class="single-card__item">
+                    {% if user.is_authenticated and user != author %}
+                        {% if author|check_following:user %}
+                            <button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Unfollow</button>
+                        {% else %}
+                           <button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Follow</button>
+                        {% endif %}
+                    {% endif %}
+                </li>
             </ul>
                 <div class="single-card__section">
                     <h3 class="single-card__section-title">Ингридиенты:</h3>
@@ -94,7 +109,7 @@
             <script src="{% static "js/singlePage.js" %}"></script>
             <script src="{% static "js/indexAuth.js" %}"></script>
         {% else %}
-            <script src="{% static "js/singleNotPage.js" %}"></script>
+            <script src="{% static "js/singlePageNotAuth.js" %}"></script>
             <script src="{% static "js/indexNotAuth.js" %}"></script>
         {% endif %}
 

@@ -30,8 +30,7 @@ class Recipe(models.Model):
                                related_name='recipes')
     type = MultiSelectField(max_length=50, choices=TYPE_CHOICES)
     ingredients = models.ManyToManyField(Ingredient,
-                                         through='RecipeIngredient',
-                                         blank=True, null=True)
+                                         through='RecipeIngredient')
     directions = models.TextField()
     post_date = models.DateTimeField(auto_now=True, db_index=True,
                                      verbose_name='publishing date')
@@ -94,3 +93,24 @@ class FavoriteRecipe(models.Model):
 
     def __str__(self):
         return f'favorite recipe - {self.recipe.name}'
+
+
+class ShoppingListManager(models.Manager):
+    def get_shopping_list(self, user):
+        return self.get_queryset().filter(user=user)
+
+
+class ShoppingList(models.Model):
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE,
+                               related_name='shopping_list')
+    user = models.ForeignKey(User, on_delete=models.CASCADE,
+                             related_name='shopping_list')
+    objects = ShoppingListManager()
+
+    class Meta:
+        verbose_name = 'Shopping List'
+        verbose_name_plural = 'Shopping Lists'
+        ordering = ['user']
+
+    def __str__(self):
+        return f'shopping list for {self.recipe}'

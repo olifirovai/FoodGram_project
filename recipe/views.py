@@ -1,10 +1,15 @@
+import json
+
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.http import (require_http_methods,
+                                          require_POST, )
 
 from user.models import User
 from .forms import RecipeForm
-from .models import Recipe
+from .models import Recipe, ShoppingList, FavoriteRecipe
 
 
 def index(request):
@@ -21,6 +26,7 @@ def recipe_view(request, username, slug):
     recipe = get_object_or_404(author.recipes, slug=slug)
     data = {'author': author, 'recipe': recipe}
     return render(request, 'recipe/recipe_page.html', data)
+
 
 @login_required
 def recipe_create(request):
@@ -68,6 +74,10 @@ def recipe_delete(request, username, slug):
         return render(request, 'recipe/recipe_delete.html', data)
 
 
+def recipe_type():
+    pass
+
+
 @login_required
 def favorite_recipes(request):
     recipe_list = Recipe.objects.get_favorite_recipes(request.user)
@@ -78,23 +88,52 @@ def favorite_recipes(request):
     return render(request, 'recipe/favorite.html', data)
 
 
-def recipe_type():
-    pass
+@login_required
+@require_POST
+def add_favorite_recipe(request):
+    recipe_id = int(json.loads(request.body).get('id'))
+    recipe = get_object_or_404(Recipe, id=recipe_id)
+    FavoriteRecipe.objects.get_or_create(user=request.user, recipe=recipe)
+    data = {'success': 'true'}
+    return JsonResponse(data)
+
+@login_required
+@require_http_methods('DELETE')
+def remove_favorite_recipe(request, id):
+    recipe = get_object_or_404(Recipe, id=id)
+    FavoriteRecipe.objects.filter(user=request.user, recipe=recipe).delete()
+    data = {'success': 'true'}
+    return JsonResponse(data)
 
 
-# def add_favorite_recipe(request, username, post_id):
-#     author = get_object_or_404(User, username=username)
-#     post = get_object_or_404(author.author_posts, id=post_id)
-#     if request.user != author:
-#         Like.objects.get_or_create(user=request.user, post=post)
-#     return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
-#
-#
-# def remove_favorite_recipe(request, username, post_id):
-#     author = get_object_or_404(User, username=username)
-#     post = get_object_or_404(author.author_posts, id=post_id)
-#     Like.objects.filter(user=request.user, post=post).delete()
-#     return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+@login_required
+def shopping_list(request):
+    shopping_list = ShoppingList.objects.get_shopping_list(request.user)
+    data = {'shopping_list': shopping_list}
+    return render(request, 'recipe/shopping_list.html', data)
+
+
+@login_required
+@require_POST
+def add_to_shopping_list(request):
+    recipe_id = int(json.loads(request.body).get('id'))
+    recipe = get_object_or_404(Recipe, id=recipe_id)
+    ShoppingList.objects.get_or_create(user=request.user, recipe=recipe)
+    data = {'success': 'true'}
+    return JsonResponse(data)
+
+
+@login_required
+@require_http_methods('DELETE')
+def remove_from_shopping_list(request, id):
+    recipe = get_object_or_404(Recipe, id=id)
+    recipe_in_list = ShoppingList.objects.get(user=request.user, recipe=recipe)
+    data = {'success': 'true'}
+    if not recipe_in_list:
+        data['success'] = 'false'
+    recipe_in_list.delete()
+    return JsonResponse(data)
+
 
 def page_not_found(request, exception):
     return render(request, 'misc/404.html', {'path': request.path}, status=404)

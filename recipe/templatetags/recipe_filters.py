@@ -1,6 +1,6 @@
 from django import template
 
-from recipe.models import Recipe
+from recipe.models import Recipe, FavoriteRecipe, ShoppingList
 
 register = template.Library()
 
@@ -33,3 +33,20 @@ def duration_format(value):
     elif minutes == 0:
         return f'{hours} {h}'
     return f'{hours} {h}, {minutes} {m}'
+
+
+@register.filter(name='check_favorite')
+def check_favorite(user, recipe):
+    favorite = FavoriteRecipe.objects.filter(user=user, recipe=recipe).exists()
+    return favorite
+
+@register.filter(name='check_in_shopping')
+def check_in_shopping(user, recipe):
+    in_shopping = ShoppingList.objects.filter(user=user, recipe=recipe).exists()
+    return in_shopping
+
+
+@register.filter(name='recipe_shopping_count')
+def recipe_shopping_count(user):
+    recipe_amount = ShoppingList.objects.get_shopping_list(user).count()
+    return recipe_amount
