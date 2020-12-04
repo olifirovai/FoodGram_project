@@ -7,7 +7,7 @@
 
 {% block content %}
     {% load recipe_filters user_filters %}
-    {% include "nav.html" with activate_page="friends"%}
+    {% include "nav.html" with active_page="friends"%}
     <main class="main container">
         <div class="main__header">
             <h1 class="main__title">My friends</h1>
@@ -27,20 +27,20 @@
                                             {% thumbnail recipe.picture "72x72" crop="center" upscale=True as im %}
                                                 <img class="recipe__image" src="{{ im.url }}" alt="{{ recipe.name }}" width="72" height="72">
                                         {% endthumbnail %}
-                                        <h3 class="recipe__title"><a class="recipe__title link" style="color: black" href="{% url "recipe" item.author.username recipe.slug %}" target="_self">{{ recipe.name }}</a></h3>
+                                        <h3 class="recipe__title" data-id="{{ recipe.id }}"><a class="recipe__title link" style="color: black" href="{% url "recipe" item.author.username recipe.slug %}" target="_self">{{ recipe.name }}</a></h3>
                                         <p class="recipe__text"><span class="icon-time"></span> {{ recipe.cook_time|duration_format }}</p>
                                     </div>
                                 </li>
                             {% endfor %}
                             <li class="card-user__item">
-                                {% if item.author.recipes.all.count > 3 %}
+                                {% if item.author.recipes.count > 3 %}
                                     <a href="{% url "user_profile"  item.author.username %}" class="card-user__link link">Find {{ item.author.recipes.count|subtract:3 }} more...</a>
                                 {% endif %}
 
                             </li>
                         </ul>
                     </div>
-                    <div class="card-user__footer" data-author="{{ item.author.id }}">
+                    <div class="card-user__footer">
                         <button class="button button_style_light-blue button_size_auto" name="subscribe">Unfollow</button>
                     </div>
                 </div>
@@ -56,11 +56,16 @@
     {% load static %}
         <script src="{% static "js/config/config.js" %}"></script>
         <script src="{% static "js/components/MainCards.js" %}"></script>
-        <script src="{% static "js/myFollow.js" %}"></script>
-        <script src="{% static "js/components/Subscribe.js" %}"></script>
+
+        <script src="{% static "js/components/Purchases.js" %}"></script>
+        <script src="{% static "js/components/Favorites.js" %}"></script>
+
         <script src="{% static "js/components/Header.js" %}"></script>
+
         <script src="{% static "js/api/Api.js" %}"></script>
-        <script src="{% static "js/myFollow.js" %}"></script>
+        <script src="{% static "js/components/Subscribe.js" %}"></script>
+        <script src="{% static "js/components/AuthorRecipe.js" %}"></script>
+        <script src="{% static "js/authorRecipe.js" %}"></script>
 
         {% if user.is_authenticated %}
             <script src="{% static "js/singlePage.js" %}"></script>

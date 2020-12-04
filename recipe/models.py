@@ -29,7 +29,9 @@ class Recipe(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE,
                                related_name='recipes')
     type = MultiSelectField(max_length=50, choices=TYPE_CHOICES)
-    ingredients = models.ManyToManyField(Ingredient, through='RecipeIngredient', blank=True, null=True)
+    ingredients = models.ManyToManyField(Ingredient,
+                                         through='RecipeIngredient',
+                                         blank=True, null=True)
     directions = models.TextField()
     post_date = models.DateTimeField(auto_now=True, db_index=True,
                                      verbose_name='publishing date')
