@@ -1,13 +1,19 @@
 from django.contrib import admin
 
-from .models import Recipe, RecipeIngredient, FavoriteRecipe
+from .models import Recipe, RecipeIngredient, FavoriteRecipe, ShoppingList
+
+
+class RecipeIngredientInLine(admin.TabularInline):
+    model = Recipe.ingredients.through
+    extra = 1
 
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
-    list_display = ('name', 'author', 'type', 'post_date')
+    inlines = (RecipeIngredientInLine,)
+    list_display = ['name', 'author', 'post_date', 'type']
+    list_display_links = ['name']
     search_fields = ('name', 'post_date', 'type',)
-    list_filter = ('name', 'post_date',)
     empty_value_display = '-empty-'
 
 
@@ -18,9 +24,18 @@ class RecipeIngredientAdmin(admin.ModelAdmin):
     list_filter = ('recipe', 'ingredient',)
     empty_value_display = '-empty-'
 
+
 @admin.register(FavoriteRecipe)
 class FavoriteRecipeAdmin(admin.ModelAdmin):
     list_display = ('recipe', 'user')
     search_fields = ('user',)
+    list_filter = ('recipe', 'user',)
+    empty_value_display = '-empty-'
+
+
+@admin.register(ShoppingList)
+class ShoppingListAdmin(admin.ModelAdmin):
+    list_display = ('recipe', 'user')
+    search_fields = ('recipe', 'user',)
     list_filter = ('recipe', 'user',)
     empty_value_display = '-empty-'

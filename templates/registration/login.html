@@ -1,12 +1,13 @@
 {% extends "base.html" %}
 {% block title %} Log in {% endblock %}
-
+{% load static %}
 {% block static %}
-    <link rel="stylesheet" href="../../static/pages/form.css">
+    <link rel="stylesheet" href="{% static "/pages/form.css" %}">
 {% endblock %}
 {% block content %}
 {% load user_filters %}
-
+{% include "nav.html" %}
+<main class="main container">
     <div class="main__header">
         <h1 class="main__title">Log In</h1>
     </div>
@@ -41,5 +42,5 @@
             </div>
         </form>
     </div>
-
+</main>
 {% endblock content %}
