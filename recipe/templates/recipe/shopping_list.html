@@ -1,4 +1,5 @@
 {# TODO remove button on this page doesn't work#}
+{# TODO make download a shopping list#}
 {% extends "base.html" %}
 {% block title %} Recipes {% endblock %}
 {% load static %}
@@ -27,12 +28,31 @@
                         <h3 class="recipe__title">{{ list.recipe.name }}</h3>
                         <p class="recipe__text"><span class="icon-time"></span> {{ list.recipe.cook_time|duration_format }}</p>
                     </div>
-                    <a href="{% url "remove_purchase" list.recipe.id %}" class="shopping-list__button link">Remove </a>
+                    <button class="button shopping-list__button link">Remove</button>
                 </li>
             {% endfor %}
         </ul>
-{#        <a href="#"><button class="button button_style_blue">Download recipe's shopping list</button></a>#}
-        <a href="#"><button class="button button_style_blue">Download shopping list</button></a>
+        <a href="#" ><button type="button" id="download-btn" class="button button_style_blue">Download a grocery list</button></a>
+{#        <script>#}
+{#            function download(filename="shopping_list.txt", text) {#}
+{#                var element = document.createElement('a');#}
+{#                element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));#}
+{#                element.setAttribute('download', filename);#}
+{##}
+{#                element.style.display = 'none';#}
+{#                document.body.appendChild(element);#}
+{##}
+{#                element.click();#}
+{##}
+{#                document.body.removeChild(element);#}
+{#            }#}
+{#            document.getElementById("download-btn").addEventListener("click", function (){#}
+{#                var text = document.getElementById("text-var").value;#}
+{#                var filename = document.getElementById("filename").value;#}
+{##}
+{#                download(filename, text)#}
+{#            }, false);#}
+{#        </script>#}
 
     </div>
 </main>

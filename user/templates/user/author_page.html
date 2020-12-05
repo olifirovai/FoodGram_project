@@ -31,22 +31,6 @@
             {% for recipe in page %}
                 <div class="card" data-id="{{ recipe.id }}">
                     {% include "recipe/recipeItem.html" %}
-                    <div class="card__footer">
-                        {% if user|check_in_shopping:recipe %}
-                            <button class="button button_style_light-blue-outline" name="purchases" data-out><span class="icon-check button__icon"></span> Recipe added</button>
-                        {% else %}
-                            <button class="button button_style_light-blue" name="purchases" data-out><span class="icon-plus button__icon"></span>Add to my shopping list</button>
-                        {% endif %}
-
-                        {% if user.is_authenticated %}
-                            {% if user|check_favorite:recipe %}
-                                <button class="button button_style_none" name="favorites" data-out><span class="icon-favorite icon-favorite_active"></span></button>
-                            {% else %}
-                                <button class="button button_style_none" name="favorites" data-out><span class="icon-favorite"></span></button>
-                            {% endif %}
-                        {% endif %}
-
-                    </div>
                 </div>
             {% endfor %}
         </div>

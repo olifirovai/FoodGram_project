@@ -5,6 +5,7 @@ from . import views
 urlpatterns = [
     path('', views.index, name='index'),
     path('create_recipe/', views.recipe_create, name='create_recipe'),
+    path('ingredients', views.get_ingredients_js, name='ingredients'),
     path('favorite_page/', views.favorite_recipes, name='favorite_recipes'),
     path('favorites', views.add_favorite_recipe, name='add_favorite_recipe'),
     path('favorites/<int:id>', views.remove_favorite_recipe,
