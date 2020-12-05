@@ -19,4 +19,3 @@ class IngredientAdmin(ImportExportModelAdmin):
     search_fields = ('name', 'measure',)
     list_filter = ('name', 'measure',)
     empty_value_display = '-empty-'
-

@@ -1,18 +1,18 @@
 import json
-import io
-from django.http import FileResponse
-from reportlab.pdfgen import canvas
+
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import (require_http_methods,
                                           require_POST, )
+
 from ingredients.models import Ingredient
 from user.models import User
 from .forms import RecipeForm
 from .models import Recipe, ShoppingList, FavoriteRecipe, RecipeIngredient
 from .utils import get_ingredients
+
 
 def index(request):
     recipe_list = Recipe.objects.all()
@@ -29,6 +29,7 @@ def recipe_view(request, username, slug):
     data = {'author': author, 'recipe': recipe}
     return render(request, 'recipe/recipe_page.html', data)
 
+
 def get_ingredients_js(request):
     text = str(request.GET.get("query"))
     print(text)
@@ -36,6 +37,7 @@ def get_ingredients_js(request):
         name__icontains=text).values('name', 'measure')
 
     return JsonResponse(list(ingredients), safe=False)
+
 
 @login_required
 def recipe_create(request):
@@ -79,7 +81,8 @@ def recipe_edit(request, username, slug):
                                 slug=recipe.slug)
         else:
             form = RecipeForm(instance=recipe)
-        data = {'form': form, 'edit': True, 'author': author, 'recipe': recipe, 'ingredients_list':ingredients_list}
+        data = {'form': form, 'edit': True, 'author': author, 'recipe': recipe,
+                'ingredients_list': ingredients_list}
         return render(request, 'recipe/recipe_form.html', data)
     else:
         return redirect('recipe', username=author, slug=recipe.slug)
@@ -119,6 +122,7 @@ def add_favorite_recipe(request):
     data = {'success': 'true'}
     return JsonResponse(data)
 
+
 @login_required
 @require_http_methods('DELETE')
 def remove_favorite_recipe(request, id):
@@ -155,6 +159,7 @@ def remove_from_shopping_list(request, id):
         data['success'] = 'false'
     recipe_in_list.delete()
     return JsonResponse(data)
+
 
 # @login_required
 # def dowload_shopping_list(request):

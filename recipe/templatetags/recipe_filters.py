@@ -40,9 +40,11 @@ def check_favorite(user, recipe):
     favorite = FavoriteRecipe.objects.filter(user=user, recipe=recipe).exists()
     return favorite
 
+
 @register.filter(name='check_in_shopping')
 def check_in_shopping(user, recipe):
-    in_shopping = ShoppingList.objects.filter(user=user, recipe=recipe).exists()
+    in_shopping = ShoppingList.objects.filter(user=user,
+                                              recipe=recipe).exists()
     return in_shopping
 
 

@@ -15,6 +15,7 @@ def check_following(author, user):
     follow = Follow.objects.get_follow(author, user)
     return follow
 
+
 @register.filter('author_name')
 def name_format(author):
     if author.last_name and author.first_name:
