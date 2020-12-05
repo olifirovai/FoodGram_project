@@ -14,7 +14,8 @@ class RecipeForm(ModelForm):
                   'cook_time': 'Total cooking time', 'picture': 'Add an image'}
 
 # class IngredientForm(ModelForm):
-#     ingredient = forms.CharField(label='What is your favorite fruit?', widget=forms.Select(choices=FRUIT_CHOICES))
+#     ingredient = forms.CharField(label='What is your favorite fruit?',
+#     widget=forms.Select(choices=FRUIT_CHOICES))
 #     class Meta:
 #         model = RecipeIngredient
 #         fields = ('ingredient', 'weight')
