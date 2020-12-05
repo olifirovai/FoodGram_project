@@ -11,37 +11,18 @@
         {% block static %}
 
         {% endblock %}
-        <script src="../static/js/components/Header.js"></script>
     </head>
 
     <body class="body">
-        {% include "nav.html" %}
-        <main class="main container">
-{#            <div class="container">#}
-                {% block content %}
+        {% block content %}
 
-                {% endblock content %}
-{#            </div>#}
-        </main>
+        {% endblock content %}
+
 
         {% include "footer.html" %}
-        <script src="../static/js/utils/debouncing.js"></script>
-        <script src="../static/js/formRecipe.js"></script>
-        <script src="../static/js/components/MainCards.js"></script>
+        {% block js %}
 
-        <script src="../static/js/components/Purchases.js"></script>
-        <script src="../static/js/components/Favorites.js"></script>
-
-        <script src="../static/js/config/config.js"></script>
-        <script src="../static/js/components/CardList.js"></script>
-        <script src="../static/js/components/Header.js"></script>
-
-        <script src="../static/js/api/Api.js"></script>
-        <script src="../static/js/favorite.js"></script>
-        <script src="../static/js/formRecipe.js"></script>
-        <script src="../static/js/myFollow.js"></script>
-        <script src="../static/js/components/MyFollow.js"></script>
-        <script src="../static/js/components/Subscribe.js"></script>
+        {% endblock js %}
     </body>
 
 </html>

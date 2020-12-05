@@ -1,28 +1,67 @@
 {% extends "base.html" %}
-{% block title %} Recipes by {{ author.username }}{% endblock %}
+{% load user_filters recipe_filters %}
+{% block title %} Recipes by {{ author|author_name}}{% endblock %}
+{% load static %}
 {% block static %}
-    <link rel="stylesheet" href="../static/pages/index.css">
+    <link rel="stylesheet" href="{% static "/pages/index.css" %}">
 {% endblock %}
 {% block content %}
-    <div class="main__header">
-        <h1 class="main__title">{{ author.username }}</h1>
-        {% include "recipe/page_tags.html" %}
+{% include "nav.html" %}
+    <main class="main container">
+        <div class="main__header">
+            {% if user.is_authenticated and user == author%}
+                <h1 class="main__title">My Page</h1>
+            {% else %}
+                <h1 class="main__title">{{ author|author_name }}</h1>
+            {% endif %}
+            {% include "recipe/page_types.html" %}
 
-    </div>
-<!--        <p style="padding: 0 0 2em 0;"><a class="button button_style_light-blue" href="#">Подписаться на автора</a></p>-->
-    <div class="author-subscribe" data-author="323">
-        <p style="padding: 0 0 2em 0;"><button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Follow</button></p>
-    </div>
-    <div class="card-list" >
-        {% for recipe in page %}
-            <div class="card" data-id="{{ recipe.id }}">
-                {% include "recipe/recipeItem.html" %}
-                <div class="card__footer">
-                    <button class="button button_style_light-blue" name="purchases" data-out><span class="icon-plus button__icon"></span>Add to My Shopping List</button>
-                    <button class="button button_style_none" name="favorites" data-out><span class="icon-favorite"></span></button>
-                </div>
+        </div>
+
+        {% if user.is_authenticated and user != author %}
+            <div class="author-subscribe" data-author="{{ author.id }}">
+                {% if author|check_following:user %}
+                    <p style="padding: 0 0 2em 0;"><button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Unfollow</button></p>
+                {% else %}
+                    <p style="padding: 0 0 2em 0;"><button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Follow</button></p>
+                {% endif %}
             </div>
-        {% endfor %}
-    </div>
-    {% include "paginator.html" %}
+        {% endif %}
+        <div class="card-list" >
+            {% for recipe in page %}
+                <div class="card" data-id="{{ recipe.id }}">
+                    {% include "recipe/recipeItem.html" %}
+                </div>
+            {% endfor %}
+        </div>
+        {% if page.has_other_pages %}
+            {% include "paginator.html" with items=page paginator=paginator %}
+        {% endif %}
+    </main>
 {% endblock content %}
+
+{% block js %}
+    {% load static %}
+        <script src="{% static "js/config/config.js" %}"></script>
+        <script src="{% static "js/components/MainCards.js" %}"></script>
+
+        <script src="{% static "js/components/Purchases.js" %}"></script>
+        <script src="{% static "js/components/Favorites.js" %}"></script>
+
+        <script src="{% static "js/components/Header.js" %}"></script>
+
+        <script src="{% static "js/api/Api.js" %}"></script>
+        <script src="{% static "js/components/Subscribe.js" %}"></script>
+        <script src="{% static "js/components/AuthorRecipe.js" %}"></script>
+        <script src="{% static "js/authorRecipe.js" %}"></script>
+
+        {% if user.is_authenticated %}
+            <script src="{% static "js/singlePage.js" %}"></script>
+            <script src="{% static "js/indexAuth.js" %}"></script>
+        {% else %}
+            <script src="{% static "js/singlePageNotAuth.js" %}"></script>
+            <script src="{% static "js/indexNotAuth.js" %}"></script>
+        {% endif %}
+
+
+{% endblock js %}

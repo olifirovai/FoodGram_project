@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %} Create Recipe {% endblock %}
+{% block static %}
+    <link rel="stylesheet" href="{% static "pages/form.css" %}">
+{% endblock %}
+{% load user_filters %}
+{% block content %}
+{% include "nav.html" with active_page="create_recipe" %}
+<main class="main container">
+
+    <div class="main__header">
+        <h1 class="main__title">{% if edit %} Edit or Delete Recipe {% else %}Create Recipe {% endif %}</h1>
+    </div>
+    <div class="form-container">
+        <form class="form" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="form__group">
+                <label for="{{ form.name.id_for_label }}" class="form__label">{{ form.name.label }}</label>
+                <div class="form__field-group">
+                    {{ form.name|addclass:"form__input" }}
+                    {% if form.name.errors %}
+                        {% for error in form.name.errors %}
+                            <span class="form__error">{{ error|escape }}</span>
+                        {% endfor %}
+                     {% endif %}
+                </div>
+            </div>
+
+            <div class="form__group">
+                <p class="form__label">{{ form.type.label }}</p>
+                <div class="form__field-group">
+                    <div class="tags">
+                    {% for value, type_name in form.type.field.choices %}
+                        <div class="tags__item">
+                        {% if type_name == "Breakfast" %}
+                            <input type="checkbox" name="type" value="{{ value }}" id="id_{{ form.type.id_for_label }}" class="tags__checkbox tags__checkbox_style_orange"
+                                    {% if edit %} {% if value in recipe.type %} checked {% endif %}{% endif %}>
+                            <label for="id_{{ value.id_for_label }}" class="tags__label">{{ type_name }}</label>
+                        {% elif type_name == "Lunch" %}
+                            <input type="checkbox" name="type" value="{{ value }}" id="id_{{ type.id_for_label }}" class="tags__checkbox tags__checkbox_style_green"
+                                    {% if edit %} {% if value in recipe.type %} checked {% endif %}{% endif %}>
+                            <label for="id_{{ value.id_for_label }}" class="tags__label">{{ type_name }}</label>
+                        {% else %}
+                            <input type="checkbox" name="type" value="{{ value }}" id="id_{{ type.id_for_label }}" class="tags__checkbox tags__checkbox_style_purple"
+                                {% if edit %} {% if value in recipe.type %} checked {% endif %}{% endif %}>
+                            <label for="id_{{ value.id_for_label }}" class="tags__label">{{ type_name }}</label>
+                        {% endif %}
+                        </div>
+                    {% endfor %}
+                    </div>
+                    <span class="form__error"></span>
+                </div>
+            </div>
+
+            <div class="form__group">
+                <label for="nameIngredient" class="form__label">{{ form.ingredients.label }}</label>
+                <div class="form__field-group">
+                    <div class="form__field-group-ingredientes">
+                        <div class="form__dropdown">
+                            <input type="text" id="nameIngredient" class="form__input">
+                            <div class="form__dropdown-items"></div>
+                        </div>
+                        <input type="number" id="cantidad" class="form__input" min="0">
+                        <label for="cantidad" class="form__label" id="cantidadVal">g</label>
+                    </div>
+                    <div class="form__field-group-ingredientes-container">
+                        {% for item in ingredients_list %}
+                            <div class="form__field-item-ingredient" id="ing_{{ item.id }}">
+                                <span> {{ item.ingredient.name }} {{ i.qty }} {{ item.ingredient.measure }}</span>
+                                <span class="form__field-item-delete"></span>
+                                <input id="idIngredient_{{ item }}" name="idIngredient_{{ item }}" type="hidden" value="{{ item.ingredient.id }}">
+                                <input id="valueIngredient_{{ item }}" name="valueIngredient_{{ item }}" type="hidden" value="{{ item.weight }}">
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <span class="form__ingredient-link" id="addIng">Add ingredient</span>
+                    <span class="form__error"></span>
+                </div>
+            </div>
+            <div class="form__group">
+                <label for="{{ form.cook_time.id_for_label }}" class="form__label">{{ form.cook_time.label }}</label>
+                <div class="form__field-group form__field-group_time">
+                    {{ form.cook_time|addclass:"form__input" }}
+                    <label for="{{ form.cook_time.id_for_label }}" class="form__label">minutes</label>
+                    {% if form.cook_time.errors %}
+                        {% for error in form.cook_time.errors %}
+                            <span class="form__error">{{ error|escape }}</span>
+                        {% endfor %}
+                     {% endif %}
+                </div>
+            </div>
+            <div class="form__group">
+                <label for="{{ form.directions.id_for_label }}" class="form__label">{{ form.directions.label }}</label>
+                <div class="form__field-group">
+                    {{ form.directions|addclass:"form__textarea" }}
+                    {% if form.directions.errors %}
+                        {% for error in form.directions.errors %}
+                            <span class="form__error">{{ error|escape }}</span>
+                        {% endfor %}
+                     {% endif %}
+                </div>
+            </div>
+            <div class="form__group">
+                <span class="form__label">{{ form.picture.label }}</span>
+                <div class="form__field-group">
+                    {{ form.picture|addclass:"form__file-button" }}
+                    {% if form.errors %}
+                        {% for error in field.errors %}
+                            <span class="form__error">{{ error|escape }}</span>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+
+
+            <div class="form__footer">
+                {% if edit %}
+                    <button class="button button_style_blue" type="submit">Save</button> <a style="margin-left: 2.5em" href="{% url "delete_recipe" recipe.author.username recipe.slug %}" class="form__ingredient-link" >Delete</a>
+                {% else %}
+                    <button type="submit" class="button button_style_blue">Add recipe</button>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+</main>
+{% endblock content %}
+
+{% block js %}
+    <script src="{% static 'js/config/config.js' %}"></script>
+    <script src="{% static 'js/components/Header.js' %}"></script>
+    <script src="{% static 'js/utils/debouncing.js' %}"></script>
+    <script src="{% static 'js/api/Api.js' %}"></script>
+    <script src="{% static 'js/formRecipe.js' %}"></script>
+    <script src="{% static 'js/indexAuth.js' %}"></script>
+{% endblock js %}

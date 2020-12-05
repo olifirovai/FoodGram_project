@@ -24,10 +24,6 @@ class User(AbstractUser):
     role = models.CharField(choices=UserRole.choices, default=UserRole.USER,
                             max_length=40, verbose_name='user\'s role')
 
-    @property
-    def is_admin(self):
-        return self.role == UserRole.ADMIN or self.is_staff or self.is_superuser
-
     class Meta(AbstractUser.Meta):
         verbose_name = 'User'
         verbose_name_plural = 'Users'
@@ -55,7 +51,6 @@ class Follow(models.Model):
     class Meta:
         verbose_name = 'Follow'
         verbose_name_plural = 'Followers'
-
 
     def __str__(self):
         return f'follower - {self.user} following - {self.author}'

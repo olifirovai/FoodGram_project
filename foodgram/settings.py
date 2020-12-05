@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+
 from django.urls import reverse_lazy
 from dotenv import load_dotenv
 
@@ -24,6 +25,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'sorl.thumbnail',
 ]
 
 MIDDLEWARE = [
@@ -95,6 +97,7 @@ USE_L10N = True
 USE_TZ = True
 
 STATIC_URL = '/static/'
+
 if DEBUG:
     STATICFILES_DIRS = [
         os.path.join(BASE_DIR, 'static')
@@ -108,6 +111,14 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 AUTH_USER_MODEL = 'user.User'
 
+LOGIN_URL = reverse_lazy('login')
+
 LOGIN_REDIRECT_URL = reverse_lazy('index')
 
 LOGOUT_REDIRECT_URL = reverse_lazy('index')
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    }
+}

@@ -12,4 +12,4 @@ class Ingredient(models.Model):
         ordering = ['name']
 
     def __str__(self):
-        return self.name[:50]
+        return f'{self.name} ({self.measure})'
