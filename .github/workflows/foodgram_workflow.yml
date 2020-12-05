@@ -1,7 +1,10 @@
 name: foodgram
 
-on: [push]
-
+on:
+  push:
+    branches: [ master, developing ]
+  pull_request:
+    branches: [ master, developing ]
 jobs:
   tests:
     runs-on: ubuntu-latest
