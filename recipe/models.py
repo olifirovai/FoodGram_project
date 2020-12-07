@@ -30,7 +30,7 @@ class Recipe(models.Model):
                                related_name='recipes')
     type = MultiSelectField(max_length=50, choices=TYPE_CHOICES)
     ingredients = models.ManyToManyField(Ingredient,
-                                         through='RecipeIngredient')
+                                         through='RecipeIngredient', blank=True, null=True)
     directions = models.TextField()
     post_date = models.DateTimeField(auto_now=True, db_index=True,
                                      verbose_name='publishing date')
@@ -110,7 +110,7 @@ class ShoppingList(models.Model):
     class Meta:
         verbose_name = 'Shopping List'
         verbose_name_plural = 'Shopping Lists'
-        ordering = ['user']
+        ordering = ['recipe']
 
     def __str__(self):
         return f'shopping list for {self.recipe}'

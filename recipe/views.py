@@ -31,40 +31,46 @@ def recipe_view(request, username, slug):
 
 
 def get_ingredients_js(request):
-    text = str(request.GET.get("query"))
-    print(text)
-    ingredients = Ingredient.objects.filter(
-        name__icontains=text).values('name', 'measure')
-
-    return JsonResponse(list(ingredients), safe=False)
+    text = request.GET.get('query')
+    data = []
+    ingredients = Ingredient.objects.filter(name__icontains=text).all()
+    for ingredient in ingredients:
+        data.append(
+            {'title': ingredient.name, 'dimension': ingredient.measure})
+    return JsonResponse(data, safe=False)
 
 
 @login_required
 def recipe_create(request):
     if request.method == 'POST':
-        form_recipe = RecipeForm(request.POST or None,
+        form = RecipeForm(request.POST or None,
                                  files=request.FILES or None)
-        ingredients = get_ingredients(request)
-        if not ingredients:
-            form_recipe.add_error(None, 'Добавьте ингредиенты')
-
-        elif form_recipe.is_valid():
-            recipe = form_recipe.save(commit=False)
+        ingredients = get_ingredients(request.POST)
+        print(request)
+        print(f'ingredients={ingredients}')
+        if form.is_valid():
+            recipe = form.save(commit=False)
             recipe.author = request.user
             recipe.save()
+            recipe_ingredients = []
             for item in ingredients:
-                RecipeIngredient.objects.create(
-                    weight=ingredients[item],
-                    ingredient=Ingredient.objects.get(name=f'{item}'),
+                recipe_ing = RecipeIngredient(
+                    weight=item.get('weight'),
+                    ingredient=Ingredient.objects.get(name=item.get('name')),
                     recipe=recipe)
+                recipe_ingredients.append(recipe_ing)
 
-            form_recipe.save_m2m()
+            print(recipe_ingredients)
+            RecipeIngredient.objects.bulk_create(recipe_ingredients)
 
             return redirect('recipe', username=request.user.username,
                             slug=recipe.slug)
+        else:
+            print('form_not valid')
     else:
-        form_recipe = RecipeForm()
-    return render(request, 'recipe/recipe_form.html', {'form': form_recipe})
+
+        form = RecipeForm()
+    return render(request, 'recipe/recipe_form.html', {'form': form})
 
 
 def recipe_edit(request, username, slug):
@@ -124,7 +130,7 @@ def add_favorite_recipe(request):
 
 
 @login_required
-@require_http_methods('DELETE')
+# @require_http_methods('DELETE')
 def remove_favorite_recipe(request, id):
     recipe = get_object_or_404(Recipe, id=id)
     FavoriteRecipe.objects.filter(user=request.user, recipe=recipe).delete()
@@ -150,7 +156,7 @@ def add_to_shopping_list(request):
 
 
 @login_required
-# @require_http_methods('DELETE')
+@require_http_methods('DELETE')
 def remove_from_shopping_list(request, id):
     recipe = get_object_or_404(Recipe, id=id)
     recipe_in_list = ShoppingList.objects.get(user=request.user, recipe=recipe)

@@ -63,20 +63,17 @@
                             <div class="form__dropdown-items"></div>
                         </div>
                         <input type="number" id="cantidad" class="form__input" min="0">
-                        <label for="cantidad" class="form__label" id="cantidadVal">g</label>
+                        <label for="cantidad" class="form__label" id="cantidadVal"></label>
                     </div>
                     <div class="form__field-group-ingredientes-container">
-                        {% for item in ingredients_list %}
-                            <div class="form__field-item-ingredient" id="ing_{{ item.id }}">
-                                <span> {{ item.ingredient.name }} {{ i.qty }} {{ item.ingredient.measure }}</span>
-                                <span class="form__field-item-delete"></span>
-                                <input id="idIngredient_{{ item }}" name="idIngredient_{{ item }}" type="hidden" value="{{ item.ingredient.id }}">
-                                <input id="valueIngredient_{{ item }}" name="valueIngredient_{{ item }}" type="hidden" value="{{ item.weight }}">
-                            </div>
-                        {% endfor %}
+
                     </div>
                     <span class="form__ingredient-link" id="addIng">Add ingredient</span>
-                    <span class="form__error"></span>
+{#                    {% if form.ingredients.errors %}#}
+{#                        {% for error in form.ingredients.errors %}#}
+{#                            <span class="form__error">{{ error|escape }}</span>#}
+{#                        {% endfor %}#}
+{#                     {% endif %}#}
                 </div>
             </div>
             <div class="form__group">

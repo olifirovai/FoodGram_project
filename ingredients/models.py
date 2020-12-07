@@ -2,7 +2,7 @@ from django.db import models
 
 
 class Ingredient(models.Model):
-    name = models.CharField(max_length=500, verbose_name='ingredient\'s name',
+    name = models.CharField(max_length=5000, verbose_name='ingredient\'s name',
                             unique=True)
     measure = models.CharField(max_length=100, verbose_name='measurement unit')
 

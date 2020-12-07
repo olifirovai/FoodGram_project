@@ -8,7 +8,7 @@
 {% block content %}
 {% include "nav.html" %}
 <main class="main container">
-
+{% csrf_token %}
     {% load recipe_filters user_filters %}
     <div class="single-card" data-id="{{ recipe.id }}" data-author="{{ author.id }}">
         {% load thumbnail %}
@@ -22,7 +22,7 @@
                     <div class="single-card__favorite">
 
                     {% if user|check_favorite:recipe %}
-                        <button class="button button_style_none" name="favorites" data-out><span class="icon-favorite icon-favorite_big icon-favorite_active"></span></button>
+                        <button class="button button_style_none" name="favorites"><span class="icon-favorite icon-favorite_big icon-favorite_active"></span></button>
                     {% else %}
                         <button class="button button_style_none" name="favorites" data-out><span class="icon-favorite icon-favorite_big"></span></button>
                     {% endif %}
@@ -53,7 +53,7 @@
             <ul class="single-card__items">
                 <li class="single-card__item">
                     {% if user|check_in_shopping:recipe %}
-                        <button class="button button_style_light-blue-outline" name="purchases" data-out><span class="icon-check button__icon"></span> Recipe added</button>
+                        <button class="button button_style_light-blue-outline" name="purchases"><span class="icon-check button__icon" ></span> Recipe added</button>
                     {% else %}
                         <button class="button button_style_blue" name="purchases" data-out><span class="icon-plus button__icon"></span>Add to my shopping list</button>
                     {% endif %}
@@ -63,7 +63,7 @@
                         {% if author|check_following:user %}
                             <button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Unfollow</button>
                         {% else %}
-                           <button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Follow</button>
+                           <button class="button button_style_light-blue button_size_subscribe" name="subscribe">Follow</button>
                         {% endif %}
                     {% endif %}
                 </li>
