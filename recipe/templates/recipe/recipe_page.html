@@ -12,9 +12,13 @@
     {% load recipe_filters user_filters %}
     <div class="single-card" data-id="{{ recipe.id }}" data-author="{{ author.id }}">
         {% load thumbnail %}
-        {% thumbnail recipe.picture "480x480" crop="center" upscale=True as im %}
-            <img class="single-card__image" src="{{ im.url }}" alt="{{ recipe.name }}" width="480" height="480">
-        {% endthumbnail %}
+        {% if not recipe.picture %}
+            <img src="/static/images/NoImage.jpg" alt="{{ recipe.name }}" class="single-card__image"></a>
+        {% else %}
+            {% thumbnail recipe.picture "480x480" crop="center" upscale=True as im %}
+                <img class="single-card__image" src="{{ im.url }}" alt="{{ recipe.name }}" width="480" height="480">
+            {% endthumbnail %}
+        {% endif %}
         <div class="single-card__info">
             {% if user.is_authenticated %}
                 <div class="single-card__header-info">

@@ -11,6 +11,8 @@ urlpatterns = [
     path('favorites/<int:id>', views.remove_favorite_recipe,
          name='remove_favorite_recipe'),
     path('my_shopping_list/', views.shopping_list, name='my_shopping_list'),
+    path('my_shopping_list/dowload/', views.dowload_shopping_list,
+         name='dowload_shopping_list'),
     path('purchases', views.add_to_shopping_list, name='add_purchase'),
     path('purchases/<int:id>', views.remove_from_shopping_list,
          name='remove_purchase'),

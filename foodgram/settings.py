@@ -11,6 +11,8 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 
 DEBUG = True
 
+THUMBNAIL_DEBUG = True
+
 ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [

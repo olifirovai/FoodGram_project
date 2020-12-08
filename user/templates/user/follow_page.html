@@ -25,9 +25,13 @@
                                 <li class="card-user__item">
                                     <div class="recipe">
                                         {% load thumbnail %}
+                                        {% if not recipe.picture %}
+                                            <img src="/static/images/NoImage.jpg" alt="{{ recipe.name }}" class="recipe__image"></a>
+                                        {% else %}
                                             {% thumbnail recipe.picture "72x72" crop="center" upscale=True as im %}
                                                 <img class="recipe__image" src="{{ im.url }}" alt="{{ recipe.name }}" width="72" height="72">
-                                        {% endthumbnail %}
+                                            {% endthumbnail %}
+                                        {% endif %}
                                         <h3 class="recipe__title" data-id="{{ recipe.id }}"><a class="recipe__title link" style="color: black" href="{% url "recipe" item.author.username recipe.slug %}" target="_self">{{ recipe.name }}</a></h3>
                                         <p class="recipe__text"><span class="icon-time"></span> {{ recipe.cook_time|duration_format }}</p>
                                     </div>
@@ -43,7 +47,7 @@
                     </div>
 
                     <div class="card-user__footer">
-                        <button class="button button_style_light-blue button_size_auto" name="subscribe" data-out="{{ item.author.id }}">Unfollow</button>
+                        <button class="button button_style_light-blue button_size_auto" name="subscribe">Unfollow</button>
                     </div>
                 </div>
             {% endfor %}

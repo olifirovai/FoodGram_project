@@ -30,7 +30,9 @@ class Recipe(models.Model):
                                related_name='recipes')
     type = MultiSelectField(max_length=50, choices=TYPE_CHOICES)
     ingredients = models.ManyToManyField(Ingredient,
-                                         through='RecipeIngredient', blank=True, null=True)
+                                         through='RecipeIngredient',
+                                         through_fields=(
+                                             'recipe', 'ingredient'))
     directions = models.TextField()
     post_date = models.DateTimeField(auto_now=True, db_index=True,
                                      verbose_name='publishing date')

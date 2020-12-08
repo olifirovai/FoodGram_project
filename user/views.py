@@ -21,12 +21,12 @@ class SignUpView(CreateView):
 
 def user_profile(request, username):
     author = get_object_or_404(User, username=username)
-    recipe = author.recipes.filter(author=author)
-    paginator = Paginator(recipe, 6)
+    recipes = author.recipes.filter(author=author)
+    paginator = Paginator(recipes, 6)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
     data = {'author': author, 'paginator': paginator,
-            'page': page}
+            'page': page, 'recipes': recipes}
     return render(request, 'user/author_page.html', data)
 
 

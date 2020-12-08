@@ -2,9 +2,13 @@
 
 <a href="{% url "recipe" recipe.author.username recipe.slug %}" class="link" target="_self">
 {% load thumbnail %}
-    {% thumbnail recipe.picture "364x240" crop="center" upscale=True as im %}
-        <img src="{{ im.url }}" alt="{{ recipe.name }}" class="card__image" width="364" height="240"></a>
-{% endthumbnail %}
+    {% if not recipe.picture %}
+        <img src="/static/images/NoImage.jpg" alt="{{ recipe.name }}" class="card__image"></a>
+    {% else %}
+        {% thumbnail recipe.picture "364x240" crop="center" upscale=True as im %}
+            <img src="{{ im.url }}" alt="{{ recipe.name }}" class="card__image" width="364" height="240"></a>
+        {% endthumbnail %}
+    {% endif %}
 <div class="card__body">
     <a class="card__title link" href="{% url "recipe" recipe.author.username recipe.slug %}" target="_self">{{ recipe.name }}</a>
         <ul class="card__items">
@@ -28,13 +32,13 @@
     <div class="card__footer">
 
         {% if user|check_in_shopping:recipe %}
-            <button class="button button_style_light-blue-outline" name="purchases" data-out><span class="icon-check button__icon"></span> Recipe added</button>
+            <button class="button button_style_light-blue-outline" name="purchases"><span class="icon-check button__icon"></span> Recipe added</button>
         {% else %}
             <button class="button button_style_light-blue" name="purchases" data-out><span class="icon-plus button__icon"></span>Add to my shopping list</button>
         {% endif %}
 
         {% if user|check_favorite:recipe %}
-            <button class="button button_style_none" name="favorites" data-out><span class="icon-favorite icon-favorite_active"></span></button>
+            <button class="button button_style_none" name="favorites"><span class="icon-favorite icon-favorite_active"></span></button>
         {% else %}
             <button class="button button_style_none" name="favorites" data-out><span class="icon-favorite"></span></button>
         {% endif %}

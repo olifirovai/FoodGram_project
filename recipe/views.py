@@ -16,6 +16,8 @@ from .utils import get_ingredients
 
 def index(request):
     recipe_list = Recipe.objects.all()
+    # result = request.GET(['tags'], None)
+    # print(result)
     paginator = Paginator(recipe_list, 6)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
@@ -43,46 +45,42 @@ def get_ingredients_js(request):
 @login_required
 def recipe_create(request):
     if request.method == 'POST':
-        form = RecipeForm(request.POST or None,
-                                 files=request.FILES or None)
+        form = RecipeForm(
+            request.POST or None, files=request.FILES or None
+        )
         ingredients = get_ingredients(request.POST)
-        print(request)
-        print(f'ingredients={ingredients}')
+
         if form.is_valid():
             recipe = form.save(commit=False)
             recipe.author = request.user
             recipe.save()
-            recipe_ingredients = []
             for item in ingredients:
                 recipe_ing = RecipeIngredient(
                     weight=item.get('weight'),
                     ingredient=Ingredient.objects.get(name=item.get('name')),
                     recipe=recipe)
-                recipe_ingredients.append(recipe_ing)
-
-            print(recipe_ingredients)
-            RecipeIngredient.objects.bulk_create(recipe_ingredients)
-
+                recipe_ing.save()
+            form.save_m2m()
             return redirect('recipe', username=request.user.username,
                             slug=recipe.slug)
-        else:
-            print('form_not valid')
-    else:
 
+    else:
         form = RecipeForm()
+
     return render(request, 'recipe/recipe_form.html', {'form': form})
 
 
 def recipe_edit(request, username, slug):
     author = get_object_or_404(User, username=username)
     recipe = get_object_or_404(author.recipes, slug=slug)
-    ingredients_list = RecipeIngredient.objects.filter(recipe=recipe)
+    ingredients_list = recipe.ingredients.all()
     if request.user == author:
         form = RecipeForm(request.POST or None, files=request.FILES or None,
                           instance=recipe)
         if request.method == 'POST':
             if form.is_valid():
-                recipe = form.save()
+                recipe = form.save(commit=False)
+                ingredients_list.delete()
                 return redirect('recipe', username=recipe.author,
                                 slug=recipe.slug)
         else:
@@ -130,7 +128,7 @@ def add_favorite_recipe(request):
 
 
 @login_required
-# @require_http_methods('DELETE')
+@require_http_methods('DELETE')
 def remove_favorite_recipe(request, id):
     recipe = get_object_or_404(Recipe, id=id)
     FavoriteRecipe.objects.filter(user=request.user, recipe=recipe).delete()
@@ -167,26 +165,35 @@ def remove_from_shopping_list(request, id):
     return JsonResponse(data)
 
 
-# @login_required
-# def dowload_shopping_list(request):
-#     # Create a file-like buffer to receive PDF data.
-#     buffer = io.BytesIO()
-#
-#     # Create the PDF object, using the buffer as its "file."
-#     p = canvas.Canvas(buffer)
-#
-#     # Draw things on the PDF. Here's where the PDF generation happens.
-#     # See the ReportLab documentation for the full list of functionality.
-#     p.drawString(100, 100, "Hello world.")
-#
-#     # Close the PDF object cleanly, and we're done.
-#     p.showPage()
-#     p.save()
-#
-#     # FileResponse sets the Content-Disposition header so that browsers
-#     # present the option to save the file.
-#     buffer.seek(0)
-#     return FileResponse(buffer, as_attachment=True, filename='hello.pdf')
+import io
+from django.http import FileResponse
+from reportlab.pdfgen import canvas
+
+
+@login_required
+def dowload_shopping_list(request):
+    # Create a file-like buffer to receive PDF data.
+    user = get_object_or_404(User, username=request.user.username)
+    shopping_list = get_object_or_404(ShoppingList, user=user)
+    buffer = io.BytesIO()
+    template_path = 'shopping_template.html'
+    # Create the PDF object, using the buffer as its "file."
+    p = canvas.Canvas(buffer)
+
+    # Draw things on the PDF. Here's where the PDF generation happens.
+    # See the ReportLab documentation for the full list of functionality.
+    p.drawString(100, 100, "Hello world.")
+
+    # Close the PDF object cleanly, and we're done.
+    p.showPage()
+    p.save()
+
+    # FileResponse sets the Content-Disposition header so that browsers
+    # present the option to save the file.
+    buffer.seek(0)
+    return FileResponse(buffer, as_attachment=True,
+                        filename='my_shopping_list.pdf')
+
 
 def page_not_found(request, exception):
     return render(request, 'misc/404.html', {'path': request.path}, status=404)

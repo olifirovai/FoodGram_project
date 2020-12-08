@@ -22,9 +22,13 @@
                 <li class="shopping-list__item" data-id="{{ list.recipe.id }}">
                     <div class="recipe recipe_reverse">
                         {% load thumbnail %}
-                        {% thumbnail list.recipe.picture "364x240" crop="center" upscale=True as im %}
-                            <img src="{{ im.url }}" alt="{{ list.recipe.name }}" class="recipe__image recipe__image_big" width="364" height="240"></a>
-                        {% endthumbnail %}
+                        {% if not list.recipe.picture %}
+                            <img src="/static/images/NoImage.jpg" alt="{{ list.recipe.name }}" class="recipe__image recipe__image_big"></a>
+                        {% else %}
+                            {% thumbnail list.recipe.picture "364x240" crop="center" upscale=True as im %}
+                                <img src="{{ im.url }}" alt="{{ list.recipe.name }}" class="recipe__image recipe__image_big" width="364" height="240"></a>
+                            {% endthumbnail %}
+                        {% endif %}
                         <h3 class="recipe__title">{{ list.recipe.name }}</h3>
                         <p class="recipe__text"><span class="icon-time"></span> {{ list.recipe.cook_time|duration_format }}</p>
                     </div>
@@ -32,7 +36,7 @@
                 </li>
             {% endfor %}
         </ul>
-        <a href="#" ><button type="button" id="download-btn" class="button button_style_blue">Download a grocery list</button></a>
+        <a href="{% url "dowload_shopping_list" %}" ><button type="button" id="download-btn" class="button button_style_blue">Download a grocery list</button></a>
 {#        <script>#}
 {#            function download(filename="shopping_list.txt", text) {#}
 {#                var element = document.createElement('a');#}

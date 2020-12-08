@@ -52,3 +52,11 @@ def check_in_shopping(user, recipe):
 def recipe_shopping_count(user):
     recipe_amount = ShoppingList.objects.get_shopping_list(user).count()
     return recipe_amount
+
+@register.filter(name='type_filter')
+def type_filter(recipe_list, type_name):
+    type_recipes = []
+    for recipe in recipe_list:
+        if type_name in list(recipe.type):
+            type_recipes.append(recipe)
+    return type_recipes
