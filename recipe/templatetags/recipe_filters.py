@@ -10,10 +10,10 @@ def subtract(value, arg):
     return value - arg
 
 
-@register.filter('recipe_type')
-def filter_types(type):
-    recipe_list = Recipe.objects.get_certain_type(type)
-    return recipe_list
+# @register.filter('recipe_type')
+# def filter_types(type):
+#     recipe_list = Recipe.objects.get_certain_type(type)
+#     return recipe_list
 
 
 @register.filter('duration_format')
@@ -53,10 +53,13 @@ def recipe_shopping_count(user):
     recipe_amount = ShoppingList.objects.get_shopping_list(user).count()
     return recipe_amount
 
-@register.filter(name='type_filter')
-def type_filter(recipe_list, type_name):
-    type_recipes = []
-    for recipe in recipe_list:
-        if type_name in list(recipe.type):
-            type_recipes.append(recipe)
-    return type_recipes
+# @register.filter(name='type_filter')
+# def type_filter(types, type_name):
+#     types.remove(type_name)
+#     return types
+#
+# @register.filter(name='type_filter_add')
+# def type_filter_add(types, type_name):
+#     types.append(type_name)
+#     return types
+#

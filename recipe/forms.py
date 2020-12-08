@@ -7,10 +7,10 @@ class RecipeForm(ModelForm):
     class Meta:
         model = Recipe
         fields = (
-            'name', 'type', 'directions', 'cook_time', 'picture'
+            'name', 'directions', 'cook_time', 'picture'
         )
         labels = {
-            'name': 'Recipe title', 'type': 'Recipe type',
+            'name': 'Recipe title',
             'directions': 'Directions', 'cook_time': 'Total cooking time',
             'picture': 'Add an image'
         }

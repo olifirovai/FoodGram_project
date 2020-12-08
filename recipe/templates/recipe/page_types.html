@@ -1,39 +1,42 @@
 {% load recipe_filters %}
-    <ul class="tags">
-        <li class="tags__item">
-            <a id="lunch" class="tags__checkbox tags__checkbox_style_orange tags__checkbox_active" href="#"></a>
-            <span for="lunch" class="tags__label">Завтрак</span>
-        </li>
-        <li class="tags__item">
-            <a id="lunch" class="tags__checkbox tags__checkbox_style_green tags__checkbox_active" href="#"></a>
-            <span for="lunch" class="tags__label">Обед</span>
-        </li>
-        <li class="tags__item">
-            <a id="dinner" class="tags__checkbox tags__checkbox_style_purple tags__checkbox_active" href="#"></a>
-            <label for="dinner" class="tags__label">Ужин</label>
-        </li>
-    </ul>
+{#    <ul class="tags">#}
+{#        <li class="tags__item">#}
+{#            <a id="lunch" class="tags__checkbox tags__checkbox_style_orange tags__checkbox_active" href="#"></a>#}
+{#            <span for="lunch" class="tags__label">Завтрак</span>#}
+{#        </li>#}
+{#        <li class="tags__item">#}
+{#            <a id="lunch" class="tags__checkbox tags__checkbox_style_green tags__checkbox_active" href="#"></a>#}
+{#            <span for="lunch" class="tags__label">Обед</span>#}
+{#        </li>#}
+{##}
+{#    </ul>#}
 
-{#<ul class="tags">#}
-{##}
-{#    <li class="tags__item">#}
-{#        <a id="breakfast"#}
-{#           class="tags__checkbox tags__checkbox_style_orange {% if 'breakfast' in tags %} tags__checkbox_active {% endif %}"#}
-{#           href="?type__icontains={{ request|type_filter:'breakfast' }}"></a>#}
-{#        <span class="tags__label">Завтрак</span>#}
-{#    </li>#}
-{##}
-{#    <li class="tags__item">#}
-{#        <a id="lunch"#}
-{#           class="tags__checkbox tags__checkbox_style_green {% if 'lunch' in tags %} tags__checkbox_active {% endif %}"#}
-{#           href="?tags={{ request|type_filter:'lunch' }}"></a>#}
-{#        <span for="lunch" class="tags__label">Обед</span>#}
-{#    </li>#}
-{##}
-{#    <li class="tags__item">#}
-{#        <a id="dinner"#}
-{#           class="tags__checkbox tags__checkbox_style_purple {% if 'dinner' in tags %} tags__checkbox_active {% endif %}"#}
-{#           href="?tags={{ request|type_filter:'dinner' }}"></a>#}
-{#        <span for="dinner" class="tags__label">Ужин</span>#}
-{#    </li>#}
-{#</ul>#}
+<ul class="tags">
+    <li class="tags__item">
+        <a  id="breakfast"
+            class="tags__checkbox tags__checkbox_style_orange
+                {% if "breakfast" in types %}tags__checkbox_active{% endif %}"
+            href="{% if "breakfast" in types %}{% url "index" %}?type={{ types|cut:"breakfast" }}
+                {% else %}{% url "index" %}?type={{ types|add:"breakfast" }}{% endif %}">
+        </a>
+        <span class="tags__label">Завтрак</span>
+    </li>
+    <li class="tags__item">
+        <a  id="lunch"
+            class="tags__checkbox tags__checkbox_style_green
+                {% if "lunch" in types %}tags__checkbox_active{% endif %}"
+            href="{% if "lunch" in types %}{% url "index" %}?type={{ types|cut:"lunch" }}
+                {% else %}{% url "index" %}?type={{ types|add:"lunch" }}{% endif %}">
+        </a>
+        <span for="lunch" class="tags__label">Обед</span>
+    </li>
+    <li class="tags__item">
+        <a  id="dinner"
+            class="tags__checkbox tags__checkbox_style_purple
+                {% if "dinner" in types %}tags__checkbox_active{% endif %}"
+            href="{% if "dinner" in types %}{% url "index" %}?type={{ types|cut:"dinner" }}
+                {% else %}{% url "index" %}?type={{ types|add:"dinner" }}{% endif %}">
+        </a>
+        <label for="dinner" class="tags__label">Ужин</label>
+    </li>
+</ul>

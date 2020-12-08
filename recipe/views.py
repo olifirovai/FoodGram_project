@@ -11,17 +11,20 @@ from ingredients.models import Ingredient
 from user.models import User
 from .forms import RecipeForm
 from .models import Recipe, ShoppingList, FavoriteRecipe, RecipeIngredient
-from .utils import get_ingredients
+from .utils import get_ingredients, filter_tag
 
 
 def index(request):
-    recipe_list = Recipe.objects.all()
+    # recipe_list = Recipe.objects.all()
+    recipe_list, types = filter_tag(request)
+    # recipe_list, tags = filter_tag(request)
     # result = request.GET(['tags'], None)
-    # print(result)
+    print(f'from view = {types}')
+
     paginator = Paginator(recipe_list, 6)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
-    data = {'paginator': paginator, 'page': page}
+    data = {'paginator': paginator, 'page': page, 'types':types}
     return render(request, 'index.html', data)
 
 
