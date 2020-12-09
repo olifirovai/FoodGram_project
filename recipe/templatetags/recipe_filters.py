@@ -52,3 +52,7 @@ def check_in_shopping(user, recipe):
 def recipe_shopping_count(user):
     recipe_amount = ShoppingList.objects.get_shopping_list(user).count()
     return recipe_amount
+
+@register.filter(name='ingredients')
+def ingredients(list, i):
+    return list[i]

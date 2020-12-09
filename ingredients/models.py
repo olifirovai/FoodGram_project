@@ -1,6 +1,7 @@
 from django.db import models
 
 
+
 class Ingredient(models.Model):
     name = models.CharField(max_length=5000, verbose_name='ingredient\'s name',
                             unique=True)

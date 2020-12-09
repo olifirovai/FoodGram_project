@@ -60,9 +60,7 @@ class Recipe(models.Model):
                                related_name='recipes')
     type = models.ManyToManyField(RecipeType, through='RecipeTypeMapping')
     ingredients = models.ManyToManyField(Ingredient,
-                                         through='RecipeIngredient',
-                                         through_fields=(
-                                             'recipe', 'ingredient'))
+                                         through='RecipeIngredient')
     directions = models.TextField()
     post_date = models.DateTimeField(auto_now=True, db_index=True,
                                      verbose_name='publishing date')
