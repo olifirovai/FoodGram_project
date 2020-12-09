@@ -1,17 +1,30 @@
-from django.core.paginator import Paginator
-from django.db.models import Q
-
 from .models import Recipe
-def filter_tag(request):
 
+
+def index_filter_tag(request):
     types = request.GET.get('type', 'breakfast,lunch,dinner,')
-    print(f'from utils = {types}')
-    types=types[:-1]
-    print(f'----from utils = {types}')
-    recipe_list = Recipe.objects.all()#.filter(type__in=types)
-    print(f'type_list{types}')
-    return recipe_list, types
-#SPLIT_PART(string, delimiter, position)
+    url_type_line = types
+    types = types[:-1].split(',')
+    recipe_list = Recipe.objects.filter(recipe_type__type__type_name__in=types).distinct()
+    return recipe_list, types, url_type_line
+
+def favorite_filter_tag(request):
+    types = request.GET.get('type', 'breakfast,lunch,dinner,')
+    url_type_line = types
+    types = types[:-1].split(',')
+    """Oh MY God!"""
+    recipe_list = Recipe.objects.get_favorite_recipes(request.user).all().filter(recipe_type__type__type_name__in=types).distinct()
+    return recipe_list, types, url_type_line
+
+
+def get_types(data):
+    types_list = []
+
+    for key in data:
+        if data[key] == 'on':
+            types_list.append(key)
+    print(f'types_list={types_list} in get_types')
+    return types_list
 
 
 def get_ingredients(data):
@@ -32,7 +45,6 @@ def get_ingredients(data):
         )
 
     return ingredients
-
 
 # def filter_by_tags(request, view, user):
 #     filters = request.GET.getlist('filters')

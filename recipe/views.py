@@ -10,21 +10,19 @@ from django.views.decorators.http import (require_http_methods,
 from ingredients.models import Ingredient
 from user.models import User
 from .forms import RecipeForm
-from .models import Recipe, ShoppingList, FavoriteRecipe, RecipeIngredient
-from .utils import get_ingredients, filter_tag
+from .models import (Recipe, ShoppingList, FavoriteRecipe, RecipeIngredient,
+                     RecipeType, RecipeTypeMapping, )
+from .utils import get_ingredients, get_types, index_filter_tag, favorite_filter_tag
 
 
 def index(request):
-    # recipe_list = Recipe.objects.all()
-    recipe_list, types = filter_tag(request)
-    # recipe_list, tags = filter_tag(request)
-    # result = request.GET(['tags'], None)
-    print(f'from view = {types}')
-
+    recipe_list, given_types, url_type_line = index_filter_tag(request)
+    types = RecipeType.objects.all()
     paginator = Paginator(recipe_list, 6)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
-    data = {'paginator': paginator, 'page': page, 'types':types}
+    data = {'paginator': paginator, 'page': page, 'types': types,
+            'given_types': given_types, 'url_type_line': url_type_line}
     return render(request, 'index.html', data)
 
 
@@ -47,21 +45,27 @@ def get_ingredients_js(request):
 
 @login_required
 def recipe_create(request):
+    types = RecipeType.objects.all()
     if request.method == 'POST':
-        form = RecipeForm(
-            request.POST or None, files=request.FILES or None
-        )
+        form = RecipeForm(request.POST or None, files=request.FILES or None)
         ingredients = get_ingredients(request.POST)
-
+        print(request.POST)
+        recipe_types = get_types(request.POST)
         if form.is_valid():
             recipe = form.save(commit=False)
             recipe.author = request.user
             recipe.save()
+            for type in recipe_types:
+                recipe_type = RecipeTypeMapping(
+                    recipe=recipe, type=RecipeType.objects.get(type_name=type)
+                )
+                recipe_type.save()
             for item in ingredients:
                 recipe_ing = RecipeIngredient(
-                    weight=item.get('weight'),
-                    ingredient=Ingredient.objects.get(name=item.get('name')),
-                    recipe=recipe)
+                    weight=item.get('weight'), recipe=recipe,
+                    ingredient=Ingredient.objects.get(name=item.get('name'))
+
+                )
                 recipe_ing.save()
             form.save_m2m()
             return redirect('recipe', username=request.user.username,
@@ -69,27 +73,47 @@ def recipe_create(request):
 
     else:
         form = RecipeForm()
-
-    return render(request, 'recipe/recipe_form.html', {'form': form})
+    data = {'form': form, 'types': types}
+    return render(request, 'recipe/recipe_form.html', data)
 
 
 def recipe_edit(request, username, slug):
     author = get_object_or_404(User, username=username)
     recipe = get_object_or_404(author.recipes, slug=slug)
-    ingredients_list = recipe.ingredients.all()
+    current_ingredients = RecipeIngredient.objects.filter(recipe=recipe)
+    current_types = RecipeTypeMapping.objects.filter(recipe=recipe)
+    types = RecipeType.objects.all()
     if request.user == author:
         form = RecipeForm(request.POST or None, files=request.FILES or None,
                           instance=recipe)
         if request.method == 'POST':
             if form.is_valid():
                 recipe = form.save(commit=False)
-                ingredients_list.delete()
+                recipe_types = get_types(request.POST)
+                ingredients = get_ingredients(request.POST)
+                current_types.delete()
+                current_ingredients.delete()
+                for type in recipe_types:
+                    recipe_type = RecipeTypeMapping(
+                        recipe=recipe,
+                        type=RecipeType.objects.get(type_name=type)
+                    )
+                    recipe_type.save()
+                for item in ingredients:
+                    recipe_ing = RecipeIngredient(
+                        weight=item.get('weight'), recipe=recipe,
+                        ingredient=Ingredient.objects.get(
+                            name=item.get('name'))
+
+                    )
+                    recipe_ing.save()
+                form.save_m2m()
                 return redirect('recipe', username=recipe.author,
                                 slug=recipe.slug)
         else:
             form = RecipeForm(instance=recipe)
         data = {'form': form, 'edit': True, 'author': author, 'recipe': recipe,
-                'ingredients_list': ingredients_list}
+                'types': types}
         return render(request, 'recipe/recipe_form.html', data)
     else:
         return redirect('recipe', username=author, slug=recipe.slug)
@@ -112,11 +136,22 @@ def recipe_type():
 
 @login_required
 def favorite_recipes(request):
-    recipe_list = Recipe.objects.get_favorite_recipes(request.user)
+    # recipe_list = Recipe.objects.all()
+    recipe_list, given_types, url_type_line = favorite_filter_tag(request)
+
+    # paginator = Paginator(recipe_list, 6)
+    # page_number = request.GET.get('page')
+    # page = paginator.get_page(page_number)
+    # data = {'paginator': paginator, 'page': page, 'types': types,
+    #         'given_types': given_types, 'url_type_line': url_type_line}
+    # return render(request, 'index.html', data)
+
+    # recipe_list = Recipe.objects.get_favorite_recipes(request.user).filter()
+    types = RecipeType.objects.all()
     paginator = Paginator(recipe_list, 6)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
-    data = {'page': page, 'paginator': paginator}
+    data = {'page': page, 'paginator': paginator, 'types': types, 'given_types': given_types, 'url_type_line': url_type_line}
     return render(request, 'recipe/favorite.html', data)
 
 

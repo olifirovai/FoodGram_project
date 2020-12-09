@@ -10,7 +10,7 @@
 <main class="main container">
     <div class="main__header">
         <h1 class="main__title">Recipes</h1>
-    {% include "recipe/page_types.html" %}
+    {% include "recipe/page_types.html" with url_name="index" %}
     </div>
     <div class="card-list">
         {% for recipe in page %}
@@ -24,7 +24,7 @@
     </div>
 
     {% if page.has_other_pages %}
-        {% include "paginator.html" with items=page paginator=paginator %}
+        {% include "paginator.html" with items=page paginator=paginator url_que=url_type_line %}
     {% endif %}
 </main>
 

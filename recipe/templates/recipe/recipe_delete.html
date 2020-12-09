@@ -12,9 +12,8 @@
     <main class="main container">
 
     {% load user_filters recipe_filters %}
-        {% include "nav.html" %}
         <div class="main__header">
-            <h1 class="main__title">Reset your Password</h1>
+            <h1 class="main__title">Delete Recipe</h1>
         </div>
         <div class="form-container">
             <form class="form" method="post" action="{% url "delete_recipe" author recipe.slug %}">

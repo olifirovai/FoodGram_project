@@ -1,9 +1,12 @@
-# from url_filter.filtersets import ModelFilterSet
-#
-# from recipe.models import Recipe
-#
-#
-# class RecipeFilterSet(ModelFilterSet):
-#     class Meta(object):
-#         model = Recipe
-#         fields = ['type', 'author']
+
+from recipe.models import Recipe
+
+
+import django_filters
+
+class ProductFilter(django_filters.FilterSet):
+    type = django_filters.CharFilter(lookup_expr='iexact')
+
+    class Meta:
+        model = Recipe
+        fields = ['price', 'release_date']

@@ -1,7 +1,7 @@
 from django import template
 
-from recipe.models import Recipe, FavoriteRecipe, ShoppingList
-
+from recipe.models import Recipe, FavoriteRecipe, ShoppingList, RecipeTypeMapping
+from django.shortcuts import get_object_or_404, redirect, render
 register = template.Library()
 
 
@@ -10,10 +10,10 @@ def subtract(value, arg):
     return value - arg
 
 
-# @register.filter('recipe_type')
-# def filter_types(type):
-#     recipe_list = Recipe.objects.get_certain_type(type)
-#     return recipe_list
+@register.filter('is_in_type')
+def is_in_type(type, recipe):
+    type_exists = RecipeTypeMapping.objects.filter(type=type, recipe=recipe).exists()
+    return type_exists
 
 
 @register.filter('duration_format')
@@ -52,14 +52,3 @@ def check_in_shopping(user, recipe):
 def recipe_shopping_count(user):
     recipe_amount = ShoppingList.objects.get_shopping_list(user).count()
     return recipe_amount
-
-# @register.filter(name='type_filter')
-# def type_filter(types, type_name):
-#     types.remove(type_name)
-#     return types
-#
-# @register.filter(name='type_filter_add')
-# def type_filter_add(types, type_name):
-#     types.append(type_name)
-#     return types
-#

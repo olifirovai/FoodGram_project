@@ -15,8 +15,7 @@ class RecipeType(models.Model):
         ('lunch', 'Lunch'),
         ('dinner', 'Dinner'),
     )
-    type_name = models.CharField(max_length=25, choices=TYPE_CHOICES,
-                                 editable=False)
+    type_name = models.CharField(max_length=25, choices=TYPE_CHOICES)
     color = models.CharField(max_length=10, default='', editable=False)
 
     class Meta:
@@ -87,7 +86,7 @@ class Recipe(models.Model):
 class RecipeIngredient(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE,
                                related_name='recipe_ingredient')
-    ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE,
+    ingredient = models.ForeignKey(Ingredient, on_delete=models.PROTECT,
                                    related_name='recipe_ingredient')
     weight = models.IntegerField(
         verbose_name='ingredient weight', null=False,
@@ -104,7 +103,7 @@ class RecipeIngredient(models.Model):
 class RecipeTypeMapping(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE,
                                related_name='recipe_type')
-    type = models.ForeignKey(RecipeType, on_delete=models.CASCADE,
+    type = models.ForeignKey(RecipeType, on_delete=models.PROTECT,
                              related_name='recipe_type')
 
     class Meta:
