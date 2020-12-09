@@ -62,14 +62,3 @@ class ShoppingListAdmin(admin.ModelAdmin):
     search_fields = ('recipe', 'user',)
     list_filter = ('recipe', 'user',)
     empty_value_display = '-empty-'
-
-
- # SELECT u.id AS user_id,
- #    ing.name AS ingredient_name,
- #    sum(ri.weight) AS total_weight,
- #    ing.measure
- #   FROM (((user_user u
- #     JOIN recipe_shoppinglist rs ON ((u.id = rs.user_id)))
- #     JOIN recipe_recipeingredient ri ON ((rs.recipe_id = ri.recipe_id)))
- #     JOIN ingredients_ingredient ing ON ((ri.ingredient_id = ing.id)))
- #  GROUP BY u.id, ing.measure, ing.name;
