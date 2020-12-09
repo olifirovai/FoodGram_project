@@ -38,8 +38,20 @@ class RecipeType(models.Model):
 
 
 class RecipeManager(models.Manager):
+
+    def get_index_in_types(self, types):
+        return self.get_queryset().filter(type__type_name__in=types).distinct()
+
+    def get_author_recipes_in_types(self, author, types):
+        return self.get_queryset().filter(author=author,
+                                          type__type_name__in=types).distinct()
+
     def get_favorite_recipes(self, user):
         return self.get_queryset().filter(favorite_recipe__user=user)
+
+    def get_favorite_in_types(self, user, types):
+        return self.get_favorite_recipes(user).filter(
+            type__type_name__in=types).distinct()
 
 
 class Recipe(models.Model):
@@ -95,6 +107,7 @@ class RecipeIngredient(models.Model):
     )
 
     class Meta:
+        unique_together = ('recipe', 'ingredient')
         verbose_name = 'Recipe Ingredient'
         verbose_name_plural = 'Recipes Ingredients'
         ordering = ['recipe']
@@ -107,6 +120,7 @@ class RecipeTypeMapping(models.Model):
                              related_name='recipe_type')
 
     class Meta:
+        unique_together = ('recipe', 'type')
         verbose_name = 'Recipe type mapping'
         verbose_name_plural = 'Recipes types mapping'
         ordering = ['type']
@@ -122,6 +136,7 @@ class FavoriteRecipe(models.Model):
                                related_name='favorite_recipe')
 
     class Meta:
+        unique_together = ('recipe', 'user')
         verbose_name = 'Favorite Recipe'
         verbose_name_plural = 'Favorite Recipes'
         ordering = ['user']
@@ -143,6 +158,7 @@ class ShoppingList(models.Model):
     objects = ShoppingListManager()
 
     class Meta:
+        unique_together = ('recipe', 'user')
         verbose_name = 'Shopping List'
         verbose_name_plural = 'Shopping Lists'
         ordering = ['recipe']

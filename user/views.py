@@ -22,12 +22,14 @@ class SignUpView(CreateView):
 
 
 def user_profile(request, username):
-    recipe_list, given_types, url_type_line = author_filter_tag(request)
+    author = get_object_or_404(User, username=username)
+    recipe_list, given_types, url_type_line = author_filter_tag(request,
+                                                                author)
     types = RecipeType.objects.all()
     paginator = Paginator(recipe_list, 6)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
-    data = {'author': request.user, 'paginator': paginator,
+    data = {'author': author, 'paginator': paginator,
             'page': page, 'recipes': recipe_list, 'types': types,
             'given_types': given_types, 'url_type_line': url_type_line}
     return render(request, 'user/author_page.html', data)

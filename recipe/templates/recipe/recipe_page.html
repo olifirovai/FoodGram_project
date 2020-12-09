@@ -51,7 +51,7 @@
             <ul class="single-card__items">
                 <li class="single-card__item">
                     {% if user|check_in_shopping:recipe %}
-                        <button class="button button_style_light-blue-outline" name="purchases"><span class="icon-check button__icon" ></span> Recipe added</button>
+                        <button class="button button_style_light-blue-outline" name="purchases"><span class="icon-check button__icon"></span> Recipe added</button>
                     {% else %}
                         <button class="button button_style_blue" name="purchases" data-out><span class="icon-plus button__icon"></span>Add to my shopping list</button>
                     {% endif %}
@@ -59,9 +59,9 @@
                 <li class="single-card__item">
                     {% if user.is_authenticated and user != author %}
                         {% if author|check_following:user %}
-                            <button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Unfollow</button>
+                            <button class="button button_style_light-blue button_size_subscribe" name="subscribe">Unfollow</button>
                         {% else %}
-                           <button class="button button_style_light-blue button_size_subscribe" name="subscribe">Follow</button>
+                           <button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Follow</button>
                         {% endif %}
                     {% endif %}
                 </li>
