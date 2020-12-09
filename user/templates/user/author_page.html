@@ -14,14 +14,14 @@
             {% else %}
                 <h1 class="main__title">{{ author|author_name }}</h1>
             {% endif %}
-            {% include "recipe/page_types.html" %}
+            {% include "user/author_page_types.html" %}
 
         </div>
 
         {% if user.is_authenticated and user != author %}
             <div class="author-subscribe" data-author="{{ author.id }}">
                 {% if author|check_following:user %}
-                    <p style="padding: 0 0 2em 0;"><button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Unfollow</button></p>
+                    <p style="padding: 0 0 2em 0;"><button class="button button_style_light-blue button_size_subscribe" name="subscribe">Unfollow</button></p>
                 {% else %}
                     <p style="padding: 0 0 2em 0;"><button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Follow</button></p>
                 {% endif %}
@@ -35,7 +35,7 @@
             {% endfor %}
         </div>
         {% if page.has_other_pages %}
-            {% include "paginator.html" with items=page paginator=paginator %}
+            {% include "paginator.html" with items=page paginator=paginator url_que=url_type_line %}
         {% endif %}
     </main>
 {% endblock content %}

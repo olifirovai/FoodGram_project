@@ -1,4 +1,3 @@
-{# TODO unfollow button on this page doesn't work#}
 {% extends "base.html" %}
 {% block title %} Friends {% endblock %}
 {% load static %}
@@ -25,9 +24,13 @@
                                 <li class="card-user__item">
                                     <div class="recipe">
                                         {% load thumbnail %}
+                                        {% if not recipe.picture %}
+                                            <img src="/static/images/NoImage.jpg" alt="{{ recipe.name }}" class="recipe__image"></a>
+                                        {% else %}
                                             {% thumbnail recipe.picture "72x72" crop="center" upscale=True as im %}
                                                 <img class="recipe__image" src="{{ im.url }}" alt="{{ recipe.name }}" width="72" height="72">
-                                        {% endthumbnail %}
+                                            {% endthumbnail %}
+                                        {% endif %}
                                         <h3 class="recipe__title" data-id="{{ recipe.id }}"><a class="recipe__title link" style="color: black" href="{% url "recipe" item.author.username recipe.slug %}" target="_self">{{ recipe.name }}</a></h3>
                                         <p class="recipe__text"><span class="icon-time"></span> {{ recipe.cook_time|duration_format }}</p>
                                     </div>
@@ -58,16 +61,14 @@
     {% load static %}
         <script src="{% static "js/config/config.js" %}"></script>
         <script src="{% static "js/components/MainCards.js" %}"></script>
+        <script src="{% static "js/components/MyFollow.js" %}"></script>
+        <script src="{% static "js/components/Subscribe.js" %}"></script>
 
-        <script src="{% static "js/components/Purchases.js" %}"></script>
-        <script src="{% static "js/components/Favorites.js" %}"></script>
 
         <script src="{% static "js/components/Header.js" %}"></script>
-
         <script src="{% static "js/api/Api.js" %}"></script>
-        <script src="{% static "js/components/Subscribe.js" %}"></script>
-        <script src="{% static "js/components/AuthorRecipe.js" %}"></script>
-        <script src="{% static "js/authorRecipe.js" %}"></script>
+        <script src="{% static "js/myFollow.js" %}"></script>
+
 
         {% if user.is_authenticated %}
             <script src="{% static "js/singlePage.js" %}"></script>

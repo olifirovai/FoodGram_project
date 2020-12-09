@@ -1,0 +1,71 @@
+{# TODO this is ingredients in table, static doesn't work correctly=( #}
+<!DOCTYPE html>
+{% load static %}
+<link rel="stylesheet" href="{% static "/blocks/shopping-list/nicepage.css"%}" media="screen">
+<link rel="stylesheet" href="{% static "/blocks/shopping-list/Страница-2.css" %}" media="screen">
+<html style="font-size: 16px;">
+{% load recipe_filters %}
+
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta name="keywords" content="My Shopping List">
+    <meta name="description" content="">
+    <meta name="page_type" content="np-template-header-footer-from-plugin">
+    <title>My Shopping List</title>
+
+{#    <link id="u-theme-google-font" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i|Open+Sans:300,300i,400,400i,600,600i,700,700i,800,800i">#}
+{##}
+{##}
+{##}
+{#    <meta property="og:title" content="Страница 2">#}
+{#    <meta property="og:type" content="website">#}
+{#    <meta name="theme-color" content="#478ac9">#}
+{#    <link rel="canonical" href="index.html">#}
+{#    <meta property="og:url" content="index.html">#}
+  </head>
+  <body class="u-body"><header class="u-align-left u-clearfix u-header u-header" id="sec-447b"><div class="u-clearfix u-sheet u-sheet-1">
+        <h1 class="u-heading-font u-text u-text-default u-title u-text-1">My Shopping List</h1>
+      </div></header>
+    <section class="u-align-center u-clearfix u-section-1" id="sec-5e74">
+      <div class="u-clearfix u-sheet u-valign-top u-sheet-1">
+        <div class="u-expanded-width u-table u-table-responsive u-table-1">
+          <table class="u-table-entity u-table-entity-1">
+            <colgroup>
+              <col width="50.3%">
+              <col width="32.7%">
+              <col width="17%">
+            </colgroup>
+            <thead class="u-palette-5-light-1 u-table-header u-table-header-1">
+              <tr style="height: 45px;">
+                <th class="u-table-cell u-table-cell-1">Ingredient Name</th>
+                <th class="u-table-cell u-table-cell-2">Needed Weight</th>
+                <th class="u-table-cell u-table-cell-3">Done Mark</th>
+              </tr>
+            </thead>
+            <tbody class="u-table-alt-palette-1-light-3 u-table-body">
+            {% for ingredient in ingredients %}
+              <tr style="height: 65px;">
+                <td class="u-table-cell">{{ ingredient|ingredients:1 }}</td>
+                <td class="u-table-cell">{{ ingredient|ingredients:2 }} - {{ ingredient|ingredients:3 }}</td>
+                <td class="u-table-cell"></td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <div class="u-border-1 u-border-grey-dark-1 u-opacity u-opacity-55 u-shape u-shape-rectangle u-text-palette-1-base u-shape-1">
+          <svg class="u-svg-link" preserveAspectRatio="none" viewBox="0 0 160 160" style=""><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-43e4"></use></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" xml:space="preserve" class="u-svg-content" viewBox="0 0 160 160" x="0px" y="0px" id="svg-43e4"><path d="M130,30v100H30V30H130 M160,0H0v160h160V0L160,0z"></path></svg>
+        </div>
+      </div>
+    </section>
+
+
+    <footer class="u-align-center u-clearfix u-footer u-grey-80 u-footer" id="sec-e22f"><div class="u-clearfix u-sheet u-sheet-1">
+        <p class="u-small-text u-text u-text-variant u-text-1">Foodgram</p>
+      </div></footer>
+    <section class="u-backlink u-clearfix u-grey-80">
+    </section>
+  </body>
+</html>

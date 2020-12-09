@@ -8,7 +8,7 @@
 {% block content %}
 {% include "nav.html" with active_page="create_recipe" %}
 <main class="main container">
-
+{% load recipe_filters %}
     <div class="main__header">
         <h1 class="main__title">{% if edit %} Edit or Delete Recipe {% else %}Create Recipe {% endif %}</h1>
     </div>
@@ -29,33 +29,23 @@
             </div>
 
             <div class="form__group">
-                <p class="form__label">{{ form.type.label }}</p>
+                <p class="form__label">Recipe Type</p>
                 <div class="form__field-group">
                     <div class="tags">
-                    {% for value, type_name in form.type.field.choices %}
-                        <div class="tags__item">
-                        {% if type_name == "Breakfast" %}
-                            <input type="checkbox" name="type" value="{{ value }}" id="id_{{ form.type.id_for_label }}" class="tags__checkbox tags__checkbox_style_orange"
-                                    {% if edit %} {% if value in recipe.type %} checked {% endif %}{% endif %}>
-                            <label for="id_{{ value.id_for_label }}" class="tags__label">{{ type_name }}</label>
-                        {% elif type_name == "Lunch" %}
-                            <input type="checkbox" name="type" value="{{ value }}" id="id_{{ type.id_for_label }}" class="tags__checkbox tags__checkbox_style_green"
-                                    {% if edit %} {% if value in recipe.type %} checked {% endif %}{% endif %}>
-                            <label for="id_{{ value.id_for_label }}" class="tags__label">{{ type_name }}</label>
-                        {% else %}
-                            <input type="checkbox" name="type" value="{{ value }}" id="id_{{ type.id_for_label }}" class="tags__checkbox tags__checkbox_style_purple"
-                                {% if edit %} {% if value in recipe.type %} checked {% endif %}{% endif %}>
-                            <label for="id_{{ value.id_for_label }}" class="tags__label">{{ type_name }}</label>
-                        {% endif %}
-                        </div>
-                    {% endfor %}
+                        {% for type in types %}
+                            <div class="tags__item">
+                                <input type="checkbox" name="{{ type.type_name }}" id="id_{{ type.type_name }}" class="tags__checkbox tags__checkbox_style_{{ type.color }}"
+                                    {% if edit %} {% if type|is_in_type:recipe %} checked {% endif %}{% endif %}>
+                                <label for="id_{{ type.type_name }}" class="tags__label">{{ type.type_name|capfirst }}</label>
+                            </div>
+                        {% endfor %}
                     </div>
                     <span class="form__error"></span>
                 </div>
             </div>
 
             <div class="form__group">
-                <label for="nameIngredient" class="form__label">{{ form.ingredients.label }}</label>
+                <label for="nameIngredient" class="form__label">Ingredients</label>
                 <div class="form__field-group">
                     <div class="form__field-group-ingredientes">
                         <div class="form__dropdown">
@@ -63,22 +53,25 @@
                             <div class="form__dropdown-items"></div>
                         </div>
                         <input type="number" id="cantidad" class="form__input" min="0">
-                        <label for="cantidad" class="form__label" id="cantidadVal">g</label>
+                        <label for="cantidad" class="form__label" id="cantidadVal"></label>
                     </div>
                     <div class="form__field-group-ingredientes-container">
-                        {% for item in ingredients_list %}
-                            <div class="form__field-item-ingredient" id="ing_{{ item.id }}">
-                                <span> {{ item.ingredient.name }} {{ i.qty }} {{ item.ingredient.measure }}</span>
-                                <span class="form__field-item-delete"></span>
-                                <input id="idIngredient_{{ item }}" name="idIngredient_{{ item }}" type="hidden" value="{{ item.ingredient.id }}">
-                                <input id="valueIngredient_{{ item }}" name="valueIngredient_{{ item }}" type="hidden" value="{{ item.weight }}">
-                            </div>
-                        {% endfor %}
+                        {% if edit %}
+                            {% for ingredient_item in recipe.recipe_ingredient.all %}
+                                <div class="form__field-item-ingredient" id="ing_{{ ingredient_item.id }}">
+                                    <span> {{ ingredient_item.ingredient.name }}</span>
+                                    <span class="form__field-item-delete"></span>
+                                    <input id="nameIngredient_{{ ingredient_item.id }}" name="nameIngredient_{{ ingredient_item.id }}" type="hidden" value="{{ ingredient_item.ingredient.name }}">
+                                    <input id="valueIngredient_{{ ingredient_item.id }}" name="valueIngredient_{{ ingredient_item.id }}" type="hidden" value="{{ ingredient_item.weight }}">
+                                    <input id="unitsIngredient_{{ ingredient_item.id }}" name="unitsIngredient_{{ ingredient_item.id }}" type="hidden" value="{{ ingredient_item.ingredient.measure }}">
+                                </div>
+                            {% endfor %}
+                        {% endif %}
                     </div>
                     <span class="form__ingredient-link" id="addIng">Add ingredient</span>
-                    <span class="form__error"></span>
                 </div>
             </div>
+
             <div class="form__group">
                 <label for="{{ form.cook_time.id_for_label }}" class="form__label">{{ form.cook_time.label }}</label>
                 <div class="form__field-group form__field-group_time">
@@ -91,6 +84,7 @@
                      {% endif %}
                 </div>
             </div>
+
             <div class="form__group">
                 <label for="{{ form.directions.id_for_label }}" class="form__label">{{ form.directions.label }}</label>
                 <div class="form__field-group">
@@ -102,6 +96,7 @@
                      {% endif %}
                 </div>
             </div>
+
             <div class="form__group">
                 <span class="form__label">{{ form.picture.label }}</span>
                 <div class="form__field-group">

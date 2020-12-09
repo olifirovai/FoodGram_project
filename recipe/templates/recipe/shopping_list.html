@@ -1,5 +1,3 @@
-{# TODO remove button on this page doesn't work#}
-{# TODO make download a shopping list#}
 {% extends "base.html" %}
 {% block title %} Recipes {% endblock %}
 {% load static %}
@@ -22,37 +20,25 @@
                 <li class="shopping-list__item" data-id="{{ list.recipe.id }}">
                     <div class="recipe recipe_reverse">
                         {% load thumbnail %}
-                        {% thumbnail list.recipe.picture "364x240" crop="center" upscale=True as im %}
-                            <img src="{{ im.url }}" alt="{{ list.recipe.name }}" class="recipe__image recipe__image_big" width="364" height="240"></a>
-                        {% endthumbnail %}
+                        {% if not list.recipe.picture %}
+                            <img src="/static/images/NoImage.jpg" alt="{{ list.recipe.name }}" class="recipe__image recipe__image_big"></a>
+                        {% else %}
+                            {% thumbnail list.recipe.picture "364x240" crop="center" upscale=True as im %}
+                                <img src="{{ im.url }}" alt="{{ list.recipe.name }}" class="recipe__image recipe__image_big" width="364" height="240"></a>
+                            {% endthumbnail %}
+                        {% endif %}
                         <h3 class="recipe__title">{{ list.recipe.name }}</h3>
                         <p class="recipe__text"><span class="icon-time"></span> {{ list.recipe.cook_time|duration_format }}</p>
                     </div>
                     <button class="button shopping-list__button link">Remove</button>
                 </li>
+            {% empty %}
+                <h3 class="text-center">Your shopping list has no recipes yet</h3>
             {% endfor %}
         </ul>
-        <a href="#" ><button type="button" id="download-btn" class="button button_style_blue">Download a grocery list</button></a>
-{#        <script>#}
-{#            function download(filename="shopping_list.txt", text) {#}
-{#                var element = document.createElement('a');#}
-{#                element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));#}
-{#                element.setAttribute('download', filename);#}
-{##}
-{#                element.style.display = 'none';#}
-{#                document.body.appendChild(element);#}
-{##}
-{#                element.click();#}
-{##}
-{#                document.body.removeChild(element);#}
-{#            }#}
-{#            document.getElementById("download-btn").addEventListener("click", function (){#}
-{#                var text = document.getElementById("text-var").value;#}
-{#                var filename = document.getElementById("filename").value;#}
-{##}
-{#                download(filename, text)#}
-{#            }, false);#}
-{#        </script>#}
+        {% if shopping_list %}
+            <a href="{% url "dowload_shopping_list" %}" ><button type="button" id="download-btn" class="button button_style_blue">Download a grocery list</button></a>
+        {% endif %}
 
     </div>
 </main>
@@ -64,7 +50,8 @@
     <script src="{% static "js/components/Header.js" %}"></script>
 
     <script src="{% static "js/api/Api.js" %}"></script>
-    <script src="{% static "js/shopList.js" %}"></script>
     <script src="{% static "js/components/ShopList.js" %}"></script>
+    <script src="{% static "js/shopList.js" %}"></script>
+
 
 {% endblock js %}
