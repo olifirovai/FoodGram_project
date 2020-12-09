@@ -4,31 +4,61 @@ import string
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils.text import slugify
-from multiselectfield import MultiSelectField
 
 from ingredients.models import Ingredient
 from user.models import User
 
 
-class RecipeManager(models.Manager):
-    def get_favorite_recipes(self, user):
-        return self.get_queryset().filter(favorite_recipe__user=user)
-
-    def get_certain_type(self, type):
-        return self.get_queryset().filter(type__in=type)
-
-
-class Recipe(models.Model):
+class RecipeType(models.Model):
     TYPE_CHOICES = (
         ('breakfast', 'Breakfast'),
         ('lunch', 'Lunch'),
         ('dinner', 'Dinner'),
     )
+    type_name = models.CharField(max_length=25, choices=TYPE_CHOICES)
+    color = models.CharField(max_length=10, default='', editable=False)
 
+    class Meta:
+        verbose_name = 'Recipe type'
+        verbose_name_plural = 'Recipe types'
+        ordering = ['type_name']
+
+    def save(self, *args, **kwargs):
+        if self.type_name == 'dinner':
+            self.color = 'purple'
+        elif self.type_name == 'lunch':
+            self.color = 'green'
+        else:
+            self.color = 'orange'
+
+        super(RecipeType, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return self.type_name
+
+
+class RecipeManager(models.Manager):
+
+    def get_index_in_types(self, types):
+        return self.get_queryset().filter(type__type_name__in=types).distinct()
+
+    def get_author_recipes_in_types(self, author, types):
+        return self.get_queryset().filter(author=author,
+                                          type__type_name__in=types).distinct()
+
+    def get_favorite_recipes(self, user):
+        return self.get_queryset().filter(favorite_recipe__user=user)
+
+    def get_favorite_in_types(self, user, types):
+        return self.get_favorite_recipes(user).filter(
+            type__type_name__in=types).distinct()
+
+
+class Recipe(models.Model):
     name = models.CharField(max_length=200, verbose_name='recipe\'s name')
     author = models.ForeignKey(User, on_delete=models.CASCADE,
                                related_name='recipes')
-    type = MultiSelectField(max_length=50, choices=TYPE_CHOICES)
+    type = models.ManyToManyField(RecipeType, through='RecipeTypeMapping')
     ingredients = models.ManyToManyField(Ingredient,
                                          through='RecipeIngredient')
     directions = models.TextField()
@@ -66,7 +96,7 @@ class Recipe(models.Model):
 class RecipeIngredient(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE,
                                related_name='recipe_ingredient')
-    ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE,
+    ingredient = models.ForeignKey(Ingredient, on_delete=models.PROTECT,
                                    related_name='recipe_ingredient')
     weight = models.IntegerField(
         verbose_name='ingredient weight', null=False,
@@ -75,9 +105,26 @@ class RecipeIngredient(models.Model):
     )
 
     class Meta:
+        unique_together = ('recipe', 'ingredient')
         verbose_name = 'Recipe Ingredient'
         verbose_name_plural = 'Recipes Ingredients'
         ordering = ['recipe']
+
+
+class RecipeTypeMapping(models.Model):
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE,
+                               related_name='recipe_type')
+    type = models.ForeignKey(RecipeType, on_delete=models.PROTECT,
+                             related_name='recipe_type')
+
+    class Meta:
+        unique_together = ('recipe', 'type')
+        verbose_name = 'Recipe type mapping'
+        verbose_name_plural = 'Recipes types mapping'
+        ordering = ['type']
+
+    def __str__(self):
+        return f'{self.recipe} has types: {self.type}'
 
 
 class FavoriteRecipe(models.Model):
@@ -87,6 +134,7 @@ class FavoriteRecipe(models.Model):
                                related_name='favorite_recipe')
 
     class Meta:
+        unique_together = ('recipe', 'user')
         verbose_name = 'Favorite Recipe'
         verbose_name_plural = 'Favorite Recipes'
         ordering = ['user']
@@ -108,9 +156,10 @@ class ShoppingList(models.Model):
     objects = ShoppingListManager()
 
     class Meta:
+        unique_together = ('recipe', 'user')
         verbose_name = 'Shopping List'
         verbose_name_plural = 'Shopping Lists'
-        ordering = ['user']
+        ordering = ['recipe']
 
     def __str__(self):
         return f'shopping list for {self.recipe}'

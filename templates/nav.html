@@ -11,7 +11,7 @@
                     <li class="nav__item {% if active_page == "shopping_list" %}nav__item_active{% endif %}"><a href="{% url "my_shopping_list" %}" class="nav__link link">Shopping list</a><span class="badge badge_style_blue nav__badge" id="counter">{{ user|recipe_shopping_count }}</span></li>
                 {% else %}
                     <li class="nav__item {% if active_page == "index" %}nav__item_active{% endif %}"><a href="{% url "index" %}" class="nav__link link">Recipes</a></li>
-                    <li class="nav__item {% if active_page == "shopping_list" %}nav__item_active{% endif %}"><a href="{% url "my_shopping_list" %}" class="nav__link link">Shopping list <span class="badge badge_style_blue nav__badge" id="counter">45678678</span></a></li>
+                    <li class="nav__item {% if active_page == "shopping_list" %}nav__item_active{% endif %}"><a href="{% url "my_shopping_list" %}" class="nav__link link">Shopping list <span class="badge badge_style_blue nav__badge" id="counter">0</span></a></li>
                 {% endif %}
             </ul>
             <ul class="nav__items list">

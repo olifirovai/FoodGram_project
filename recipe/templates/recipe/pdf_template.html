@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<body class="body">
+{% load recipe_filters %}
+    <main>
+        <p></p>
+        <div>
+            <ul>
+            {% for ingredient in ingredients %}
+                <li>
+                <div>
+                    <h2>{{ ingredient|ingredients:1 }} - {{ ingredient|ingredients:2 }} {{ ingredient|ingredients:3 }}</h2>
+                </div>
+                </li>
+            {% endfor %}
+            </ul>
+        </div>
+    </main>
+
+</body>
+</html>

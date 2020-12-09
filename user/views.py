@@ -9,8 +9,10 @@ from django.views.decorators.http import (require_http_methods,
                                           require_POST, )
 from django.views.generic import CreateView
 
+from recipe.models import RecipeType
 from .forms import CreationForm
 from .models import User, Follow
+from .utils import author_filter_tag
 
 
 class SignUpView(CreateView):
@@ -21,12 +23,15 @@ class SignUpView(CreateView):
 
 def user_profile(request, username):
     author = get_object_or_404(User, username=username)
-    recipe = author.recipes.filter(author=author)
-    paginator = Paginator(recipe, 6)
+    recipe_list, given_types, url_type_line = author_filter_tag(request,
+                                                                author)
+    types = RecipeType.objects.all()
+    paginator = Paginator(recipe_list, 6)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
     data = {'author': author, 'paginator': paginator,
-            'page': page}
+            'page': page, 'recipes': recipe_list, 'types': types,
+            'given_types': given_types, 'url_type_line': url_type_line}
     return render(request, 'user/author_page.html', data)
 
 
