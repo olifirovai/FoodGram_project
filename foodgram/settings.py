@@ -127,3 +127,5 @@ CACHES = {
 }
 
 SITE_ID = 1
+
+OBJECT_PER_PAGE = 6

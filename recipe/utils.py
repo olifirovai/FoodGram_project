@@ -1,6 +1,5 @@
 from .models import Recipe
 
-
 def index_filter_tag(request):
     types = request.GET.get('type', 'breakfast,lunch,dinner,')
     url_type_line = types
@@ -14,7 +13,7 @@ def favorite_filter_tag(request):
     url_type_line = types
     types = types[:-1].split(',')
     recipe_list = Recipe.objects.get_favorite_in_types(request.user, types)
-    return recipe_list, types, url_type_line
+    return url_type_line
 
 
 def get_types(data):
@@ -23,7 +22,7 @@ def get_types(data):
     for key in data:
         if data[key] == 'on':
             types_list.append(key)
-    print(f'types_list={types_list} in get_types')
+    print(types_list)
     return types_list
 
 

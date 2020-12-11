@@ -2,6 +2,8 @@ from django import template
 
 from recipe.models import FavoriteRecipe, ShoppingList, RecipeTypeMapping
 
+# TODO булевские функции лучше называть с префиксом is_, а не check_ - лучше читается
+
 register = template.Library()
 
 

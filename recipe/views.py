@@ -11,6 +11,7 @@ from django.views.decorators.http import (require_http_methods,
                                           require_POST, )
 from xhtml2pdf import pisa
 
+from foodgram.settings import OBJECT_PER_PAGE
 from ingredients.models import Ingredient
 from user.models import User
 from .forms import RecipeForm
@@ -31,9 +32,11 @@ def get_ingredients_js(request):
 
 
 def index(request):
-    recipe_list, given_types, url_type_line = index_filter_tag(request)
+    url_type_line = index_filter_tag(request)
+    given_types = get_types(request.GET)
+    recipe_list = Recipe.objects.get_favorite_in_types(request.user, given_types)
     types = RecipeType.objects.all()
-    paginator = Paginator(recipe_list, 6)
+    paginator = Paginator(recipe_list, OBJECT_PER_PAGE)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
     data = {'paginator': paginator, 'page': page, 'types': types,
@@ -57,6 +60,10 @@ def recipe_create(request):
         recipe_types = get_types(request.POST)
 
         if form.is_valid():
+            #TODO Здесь и в функции ниже - очень похожий код, который не очень
+            # связан с вьюхой, но содержит в себе логику. При этом, логику
+            # достаточно сложную. Лучше вынести в отдельные функции в модуль
+            # утилзов и переиспользовать
             recipe = form.save(commit=False)
             recipe.author = request.user
             recipe.save()
@@ -84,6 +91,7 @@ def recipe_create(request):
     return render(request, 'recipe/recipe_form.html', data)
 
 
+#TODO не работает сохранение картинки при редактировании рецепта
 @login_required
 def recipe_edit(request, username, slug):
     author = get_object_or_404(User, username=username)
@@ -149,7 +157,7 @@ def recipe_delete(request, username, slug):
 def favorite_recipes(request):
     recipe_list, given_types, url_type_line = favorite_filter_tag(request)
     types = RecipeType.objects.all()
-    paginator = Paginator(recipe_list, 6)
+    paginator = Paginator(recipe_list, OBJECT_PER_PAGE)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
     data = {'page': page, 'paginator': paginator, 'types': types,
@@ -172,6 +180,10 @@ def add_favorite_recipe(request):
 def remove_favorite_recipe(request, id):
     recipe = get_object_or_404(Recipe, id=id)
     FavoriteRecipe.objects.filter(user=request.user, recipe=recipe).delete()
+    # TODO здесь должна быть не строка в ответе, а булевский True
+    # True вижу, но по доке должен быть еще и False.
+    # А вот его не вижу
+    # Ниже аналогично
     data = {'success': 'true'}
     return JsonResponse(data)
 
@@ -210,9 +222,15 @@ def dowload_shopping_list(request):
     cursor = connection.cursor()
     user = get_object_or_404(User, id=request.user.id)
     sql_string = f'SELECT * FROM total_weights WHERE user_id = {user.id}'
+    #TODO Прямые запросы в базу это адекватно, если запрос слишком сложный,
+    # чтобы сделать его с помощью ORM. Но это явно не наш случай.
+    # Более того, это, опять же, очень сложная логика для вьюхи.
+    # Генерацию файла лучше выделить в отдельную функцию, а здесь ее вызвать,
+    # передав набор данных, нужный для рендера в файл
+
     cursor.execute(sql_string)
     ingredients_list = cursor.fetchall()
-    # тут я пыталась сделать карсиво=(
+    # тут я пыталась сделать красиво=(
     template_path = 'recipe/shopping_template.html'
     # это простая версия PDF
     # template_path = 'recipe/pdf_template.html'
