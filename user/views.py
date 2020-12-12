@@ -53,9 +53,11 @@ def follow_page(request):
 def follow_author(request):
     author_id = int(json.loads(request.body).get('id'))
     author = get_object_or_404(User, pk=author_id)
+    data = {'success': True}
     if request.user != author:
-        Follow.objects.get_or_create(user=request.user, author=author)
-    data = {'success': 'true'}
+        get, create = Follow.objects.get_or_create(user=request.user, author=author)
+        if get:
+            data['success'] = False
     return JsonResponse(data)
 
 
@@ -63,9 +65,9 @@ def follow_author(request):
 @require_http_methods('DELETE')
 def unfollow_author(request, id):
     author = get_object_or_404(User, id=id)
-    data = {'success': 'true'}
+    data = {'success': True}
     follow = Follow.objects.get_follow(author, request.user)
     if not follow:
-        data['success'] = 'false'
+        data['success'] = False
     follow.delete()
     return JsonResponse(data)

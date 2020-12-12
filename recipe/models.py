@@ -1,6 +1,6 @@
 import random
 import string
-
+from django.db.models import Sum
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils.text import slugify
@@ -161,6 +161,19 @@ class ShoppingListManager(models.Manager):
     def get_shopping_list(self, user):
         return self.get_queryset().filter(user=user)
 
+    def get_weights_in_shopping_list(self, user):
+        users_recipe = self.get_shopping_list(user)
+        print(users_recipe)
+        recipe = [recipe.recipe for recipe in users_recipe]
+        print(recipe)
+        weights_list = RecipeIngredient.objects.filter(
+            recipe__in=recipe
+        ).values(
+            'ingredient__name', 'ingredient__measure'
+        ).annotate(
+            Sum('weight')
+        )
+        return weights_list
 
 class ShoppingList(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE,
