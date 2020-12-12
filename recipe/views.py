@@ -12,14 +12,16 @@ from django.views.decorators.http import (require_http_methods,
 from xhtml2pdf import pisa
 
 from foodgram.settings import OBJECT_PER_PAGE
-from ingredients.models import Ingredient
 from user.models import User
 from .forms import RecipeForm
 from .models import (Recipe, ShoppingList, FavoriteRecipe, RecipeIngredient,
-                     RecipeType, RecipeTypeMapping, )
-from .utils import (get_ingredients, get_types, index_filter_tag,
-                    favorite_filter_tag, )
+                     RecipeType, RecipeTypeMapping, Ingredient, )
+from .utils import (get_ingredients, get_types, get_filter_type,
+                    favorite_filter_tag, get_url_with_types, )
 
+def get_recipe_list_by_type(types, *args, **kwargs):
+
+    pass
 
 def get_ingredients_js(request):
     text = request.GET.get('query')
@@ -32,9 +34,9 @@ def get_ingredients_js(request):
 
 
 def index(request):
-    url_type_line = index_filter_tag(request)
-    given_types = get_types(request.GET)
-    recipe_list = Recipe.objects.get_favorite_in_types(request.user, given_types)
+    given_types = get_filter_type(request)
+    recipe_list = Recipe.objects.get_index_in_types(given_types)
+    url_type_line = get_url_with_types(request, given_types)
     types = RecipeType.objects.all()
     paginator = Paginator(recipe_list, OBJECT_PER_PAGE)
     page_number = request.GET.get('page')
@@ -60,7 +62,7 @@ def recipe_create(request):
         recipe_types = get_types(request.POST)
 
         if form.is_valid():
-            #TODO Здесь и в функции ниже - очень похожий код, который не очень
+            # TODO Здесь и в функции ниже - очень похожий код, который не очень
             # связан с вьюхой, но содержит в себе логику. При этом, логику
             # достаточно сложную. Лучше вынести в отдельные функции в модуль
             # утилзов и переиспользовать
@@ -91,7 +93,7 @@ def recipe_create(request):
     return render(request, 'recipe/recipe_form.html', data)
 
 
-#TODO не работает сохранение картинки при редактировании рецепта
+# TODO не работает сохранение картинки при редактировании рецепта
 @login_required
 def recipe_edit(request, username, slug):
     author = get_object_or_404(User, username=username)
@@ -222,7 +224,7 @@ def dowload_shopping_list(request):
     cursor = connection.cursor()
     user = get_object_or_404(User, id=request.user.id)
     sql_string = f'SELECT * FROM total_weights WHERE user_id = {user.id}'
-    #TODO Прямые запросы в базу это адекватно, если запрос слишком сложный,
+    # TODO Прямые запросы в базу это адекватно, если запрос слишком сложный,
     # чтобы сделать его с помощью ORM. Но это явно не наш случай.
     # Более того, это, опять же, очень сложная логика для вьюхи.
     # Генерацию файла лучше выделить в отдельную функцию, а здесь ее вызвать,

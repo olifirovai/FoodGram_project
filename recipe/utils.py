@@ -1,11 +1,27 @@
-from .models import Recipe
+from .models import Recipe, RecipeType
 
-def index_filter_tag(request):
-    types = request.GET.get('type', 'breakfast,lunch,dinner,')
-    url_type_line = types
-    types = types[:-1].split(',')
-    recipe_list = Recipe.objects.get_index_in_types(types)
-    return recipe_list, types, url_type_line
+
+def get_url_with_types(request, types):
+    if types:
+        url_type_line = f'{request.GET.urlencode()}&'
+
+    else:
+        url_type_line = ''
+    print(types)
+    return url_type_line
+
+
+def collect_data_with_types():
+    pass
+
+
+def get_filter_type(request):
+    types = request.GET.getlist('type_exclude')
+    print(f'types={type(types)}')
+    # types = RecipeType.objects
+    print(types)
+
+    return types
 
 
 def favorite_filter_tag(request):
@@ -13,7 +29,7 @@ def favorite_filter_tag(request):
     url_type_line = types
     types = types[:-1].split(',')
     recipe_list = Recipe.objects.get_favorite_in_types(request.user, types)
-    return url_type_line
+    return recipe_list, types, url_type_line
 
 
 def get_types(data):

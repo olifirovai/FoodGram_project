@@ -25,7 +25,7 @@
                     <h1 class="single-card__title">{{ recipe.name }}</h1>
                     <div class="single-card__favorite">
 
-                    {% if user|check_favorite:recipe %}
+                    {% if user|is_favorite:recipe %}
                         <button class="button button_style_none" name="favorites"><span class="icon-favorite icon-favorite_big icon-favorite_active"></span></button>
                     {% else %}
                         <button class="button button_style_none" name="favorites" data-out><span class="icon-favorite icon-favorite_big"></span></button>
@@ -50,7 +50,7 @@
             </div>
             <ul class="single-card__items">
                 <li class="single-card__item">
-                    {% if user|check_in_shopping:recipe %}
+                    {% if user|is_in_shopping:recipe %}
                         <button class="button button_style_light-blue-outline" name="purchases"><span class="icon-check button__icon"></span> Recipe added</button>
                     {% else %}
                         <button class="button button_style_blue" name="purchases" data-out><span class="icon-plus button__icon"></span>Add to my shopping list</button>

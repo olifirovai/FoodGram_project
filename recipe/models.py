@@ -5,8 +5,21 @@ from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils.text import slugify
 
-from ingredients.models import Ingredient
 from user.models import User
+
+
+class Ingredient(models.Model):
+    name = models.CharField(max_length=5000, verbose_name='ingredient\'s name',
+                            unique=True)
+    measure = models.CharField(max_length=100, verbose_name='measurement unit')
+
+    class Meta:
+        verbose_name = 'Ingredient'
+        verbose_name_plural = 'Ingredients'
+        ordering = ['name']
+
+    def __str__(self):
+        return f'{self.name} ({self.measure})'
 
 
 class RecipeType(models.Model):
@@ -15,7 +28,8 @@ class RecipeType(models.Model):
         ('lunch', 'Lunch'),
         ('dinner', 'Dinner'),
     )
-    type_name = models.CharField(max_length=25, choices=TYPE_CHOICES)
+    type_name = models.CharField(max_length=25, choices=TYPE_CHOICES,
+                                 unique=True)
     color = models.CharField(max_length=10, default='', editable=False)
 
     class Meta:
@@ -39,8 +53,10 @@ class RecipeType(models.Model):
 
 class RecipeManager(models.Manager):
 
-    def get_index_in_types(self, types):
-        return self.get_queryset().filter(type__type_name__in=types).distinct()
+    def get_index_in_types(self, exclude_types):
+        types = RecipeType.objects.exclude(type_name__in=exclude_types)
+        return self.get_queryset().filter(type__in=types).distinct()
+
 
     def get_author_recipes_in_types(self, author, types):
         return self.get_queryset().filter(author=author,

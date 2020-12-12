@@ -18,7 +18,6 @@ ALLOWED_HOSTS = ['*']
 INSTALLED_APPS = [
     'user',
     'recipe',
-    'ingredients',
     'import_export',
     'django.contrib.admin',
     'django.contrib.auth',

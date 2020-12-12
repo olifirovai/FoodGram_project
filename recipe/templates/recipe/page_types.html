@@ -1,32 +1,18 @@
 {% load recipe_filters %}
-
 <ul class="tags">
-
+    {% for type in types %}
     <li class="tags__item">
-        <a  id="breakfast"
-            class="tags__checkbox tags__checkbox_style_orange
-                {% if "breakfast" in given_types %}tags__checkbox_active{% endif %}"
-            href="{% if "breakfast" in given_types %}{% url url_name %}?type={{ url_type_line|cut:"breakfast," }}
-                {% else %}{% url url_name %}?type={{ url_type_line|add:"breakfast," }}{% endif %}">
+        <a  id="{{ type.type_name }}"
+            class="tags__checkbox tags__checkbox_style_{{ type.color }}
+                {% if not type.type_name in given_types %}tags__checkbox_active{% endif %}"
+            href="?{% if type.type_name in given_types %}
+{% with url_type=type.type_name|get_type_url %}
+{{ url_type_line|cut:url_type }}
+{% endwith %}
+{% else %}
+{{ url_type_line|add_type_to_url:type.type_name }}{% endif %}">
         </a>
-        <span class="tags__label">Breakfast </span>
+        <span class="tags__label">{{ type.type_name|capfirst }} </span>
     </li>
-    <li class="tags__item">
-        <a  id="lunch"
-            class="tags__checkbox tags__checkbox_style_green
-                {% if "lunch" in given_types %}tags__checkbox_active{% endif %}"
-            href="{% if "lunch" in given_types %}{% url url_name %}?type={{ url_type_line|cut:"lunch," }}
-                {% else %}{% url url_name %}?type={{ url_type_line|add:"lunch," }}{% endif %}">
-        </a>
-        <span for="lunch" class="tags__label">Lunch </span>
-    </li>
-    <li class="tags__item">
-        <a  id="dinner"
-            class="tags__checkbox tags__checkbox_style_purple
-                {% if "dinner" in given_types %}tags__checkbox_active{% endif %}"
-            href="{% if "dinner" in given_types %}{% url url_name %}?type={{ url_type_line|cut:"dinner," }}
-                {% else %}{% url url_name %}?type={{ url_type_line|add:"dinner," }}{% endif %}">
-        </a>
-        <label for="dinner" class="tags__label">Dinner </label>
-    </li>
+    {% endfor %}
 </ul>
