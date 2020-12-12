@@ -1,8 +1,9 @@
 import random
 import string
-from django.db.models import Sum
+
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.db.models import Sum
 from django.utils.text import slugify
 
 from user.models import User
@@ -174,6 +175,7 @@ class ShoppingListManager(models.Manager):
             Sum('weight')
         )
         return weights_list
+
 
 class ShoppingList(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE,

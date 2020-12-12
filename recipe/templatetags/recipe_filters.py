@@ -61,10 +61,12 @@ def recipe_shopping_count(user):
 def ingredients(list, i):
     return list[i]
 
+
 @register.filter()
 def get_type_url(type_name):
     url_line = f'type_exclude={type_name}&'
     return url_line
+
 
 @register.filter()
 def add_type_to_url(url, type_name):

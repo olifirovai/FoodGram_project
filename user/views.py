@@ -55,7 +55,8 @@ def follow_author(request):
     author = get_object_or_404(User, pk=author_id)
     data = {'success': True}
     if request.user != author:
-        get, create = Follow.objects.get_or_create(user=request.user, author=author)
+        get, create = Follow.objects.get_or_create(user=request.user,
+                                                   author=author)
         if get:
             data['success'] = False
     return JsonResponse(data)

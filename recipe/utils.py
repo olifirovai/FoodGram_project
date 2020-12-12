@@ -1,5 +1,5 @@
 from .models import RecipeType, RecipeTypeMapping, RecipeIngredient, Ingredient
-from django.core.exceptions import ValidationError
+
 
 def get_url_with_types(request):
     url_type_line = f'{request.GET.urlencode()}&'
@@ -40,6 +40,7 @@ def get_ingredients(data):
         )
 
     return ingredients
+
 
 def save_types_and_ingredients(recipe, types, ingredients):
     for type in types:
