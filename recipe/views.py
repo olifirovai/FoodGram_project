@@ -1,8 +1,8 @@
 import json
 
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator
-from django.db import connection
 from django.http import HttpResponse
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -11,32 +11,35 @@ from django.views.decorators.http import (require_http_methods,
                                           require_POST, )
 from xhtml2pdf import pisa
 
-from ingredients.models import Ingredient
+from foodgram.settings import OBJECT_PER_PAGE
 from user.models import User
 from .forms import RecipeForm
 from .models import (Recipe, ShoppingList, FavoriteRecipe, RecipeIngredient,
-                     RecipeType, RecipeTypeMapping, )
-from .utils import (get_ingredients, get_types, index_filter_tag,
-                    favorite_filter_tag, )
+                     RecipeType, RecipeTypeMapping, Ingredient, )
+from .utils import (get_ingredients, get_types, get_filter_type,
+                    get_url_with_types, save_types_and_ingredients, )
 
 
 def get_ingredients_js(request):
     text = request.GET.get('query')
     data = []
-    ingredients = Ingredient.objects.filter(name__icontains=text).all()
+    ingredients = Ingredient.objects.filter(name__startswith=text).values(
+        'name', 'measure')
     for ingredient in ingredients:
         data.append(
-            {'title': ingredient.name, 'dimension': ingredient.measure})
+            {'title': ingredient['name'], 'dimension': ingredient['measure']})
     return JsonResponse(data, safe=False)
 
 
 def index(request):
-    recipe_list, given_types, url_type_line = index_filter_tag(request)
-    types = RecipeType.objects.all()
-    paginator = Paginator(recipe_list, 6)
+    given_types = get_filter_type(request)
+    recipe_list = Recipe.objects.get_index_in_types(given_types)
+    url_type_line = get_url_with_types(request)
+    all_types = RecipeType.objects.all()
+    paginator = Paginator(recipe_list, OBJECT_PER_PAGE)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
-    data = {'paginator': paginator, 'page': page, 'types': types,
+    data = {'paginator': paginator, 'page': page, 'types': all_types,
             'given_types': given_types, 'url_type_line': url_type_line}
     return render(request, 'index.html', data)
 
@@ -55,25 +58,18 @@ def recipe_create(request):
         form = RecipeForm(request.POST or None, files=request.FILES or None)
         ingredients = get_ingredients(request.POST)
         recipe_types = get_types(request.POST)
+        if not recipe_types:
+            form.add_error(None, ValidationError('Add at least one type'))
+        if not ingredients:
+            form.add_error(None,
+                           ValidationError('Add at least one ingredient'))
 
         if form.is_valid():
             recipe = form.save(commit=False)
             recipe.author = request.user
             recipe.save()
-            for type in recipe_types:
-                recipe_type = RecipeTypeMapping(
-                    recipe=recipe, type=RecipeType.objects.get(type_name=type)
-                )
-                recipe_type.save()
-
-            for item in ingredients:
-                recipe_ing = RecipeIngredient(
-                    weight=item.get('weight'), recipe=recipe,
-                    ingredient=Ingredient.objects.get(name=item.get('name'))
-
-                )
-                recipe_ing.save()
-
+            save_types_and_ingredients(recipe, recipe_types,
+                                       ingredients)
             form.save_m2m()
             return redirect('recipe', username=request.user.username,
                             slug=recipe.slug)
@@ -88,37 +84,28 @@ def recipe_create(request):
 def recipe_edit(request, username, slug):
     author = get_object_or_404(User, username=username)
     recipe = get_object_or_404(author.recipes, slug=slug)
-    current_ingredients = RecipeIngredient.objects.filter(recipe=recipe)
-    current_types = RecipeTypeMapping.objects.filter(recipe=recipe)
-    types = RecipeType.objects.all()
     if request.user == author:
+        current_ingredients = RecipeIngredient.objects.filter(recipe=recipe)
+        current_types = RecipeTypeMapping.objects.filter(recipe=recipe)
+        types = RecipeType.objects.all()
         form = RecipeForm(request.POST or None, files=request.FILES or None,
                           instance=recipe)
 
         if request.method == 'POST':
+            recipe_types = get_types(request.POST)
+            ingredients = get_ingredients(request.POST)
+
+            if not recipe_types:
+                form.add_error(None, ValidationError('Add at least one type'))
+            if not ingredients:
+                form.add_error(None,
+                               ValidationError('Add at least one ingredient'))
+
             if form.is_valid():
-                recipe = form.save(commit=False)
-                recipe_types = get_types(request.POST)
-                ingredients = get_ingredients(request.POST)
                 current_types.delete()
                 current_ingredients.delete()
-
-                for type in recipe_types:
-                    recipe_type = RecipeTypeMapping(
-                        recipe=recipe,
-                        type=RecipeType.objects.get(type_name=type)
-                    )
-                    recipe_type.save()
-
-                for item in ingredients:
-                    recipe_ing = RecipeIngredient(
-                        weight=item.get('weight'), recipe=recipe,
-                        ingredient=Ingredient.objects.get(
-                            name=item.get('name'))
-
-                    )
-                    recipe_ing.save()
-
+                recipe = form.save(commit=False)
+                save_types_and_ingredients(recipe, recipe_types, ingredients)
                 form.save_m2m()
                 return redirect('recipe', username=recipe.author,
                                 slug=recipe.slug)
@@ -147,12 +134,16 @@ def recipe_delete(request, username, slug):
 
 @login_required
 def favorite_recipes(request):
-    recipe_list, given_types, url_type_line = favorite_filter_tag(request)
-    types = RecipeType.objects.all()
-    paginator = Paginator(recipe_list, 6)
+    given_types = get_filter_type(request)
+    recipe_list = Recipe.objects.get_favorite_in_types(request.user,
+                                                       given_types)
+    url_type_line = get_url_with_types(request)
+
+    all_types = RecipeType.objects.all()
+    paginator = Paginator(recipe_list, OBJECT_PER_PAGE)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
-    data = {'page': page, 'paginator': paginator, 'types': types,
+    data = {'page': page, 'paginator': paginator, 'types': all_types,
             'given_types': given_types, 'url_type_line': url_type_line}
     return render(request, 'recipe/favorite.html', data)
 
@@ -171,8 +162,11 @@ def add_favorite_recipe(request):
 @require_http_methods('DELETE')
 def remove_favorite_recipe(request, id):
     recipe = get_object_or_404(Recipe, id=id)
-    FavoriteRecipe.objects.filter(user=request.user, recipe=recipe).delete()
-    data = {'success': 'true'}
+    if FavoriteRecipe.objects.filter(user=request.user,
+                                     recipe=recipe).delete():
+        data = {'success': True}
+    else:
+        data = {'success': False}
     return JsonResponse(data)
 
 
@@ -188,8 +182,12 @@ def shopping_list(request):
 def add_to_shopping_list(request):
     recipe_id = int(json.loads(request.body).get('id'))
     recipe = get_object_or_404(Recipe, id=recipe_id)
-    ShoppingList.objects.get_or_create(user=request.user, recipe=recipe)
-    data = {'success': 'true'}
+    get, create = ShoppingList.objects.get_or_create(user=request.user,
+                                                     recipe=recipe)
+    if get:
+        data = {'success': False}
+    else:
+        data = {'success': True}
     return JsonResponse(data)
 
 
@@ -198,29 +196,28 @@ def add_to_shopping_list(request):
 def remove_from_shopping_list(request, id):
     recipe = get_object_or_404(Recipe, id=id)
     recipe_in_list = ShoppingList.objects.get(user=request.user, recipe=recipe)
-    data = {'success': 'true'}
+    data = {'success': True}
     if not recipe_in_list:
-        data['success'] = 'false'
+        data['success'] = False
     recipe_in_list.delete()
     return JsonResponse(data)
 
 
+def generate_data_for_shopping_list(request):
+    user = get_object_or_404(User, id=request.user.id)
+    ingredients_list = ShoppingList.objects.get_weights_in_shopping_list(user)
+    context = {'ingredients': ingredients_list}
+    return context
+
+
 @login_required
 def dowload_shopping_list(request):
-    cursor = connection.cursor()
-    user = get_object_or_404(User, id=request.user.id)
-    sql_string = f'SELECT * FROM total_weights WHERE user_id = {user.id}'
-    cursor.execute(sql_string)
-    ingredients_list = cursor.fetchall()
-    # тут я пыталась сделать карсиво=(
     template_path = 'recipe/shopping_template.html'
-    # это простая версия PDF
-    # template_path = 'recipe/pdf_template.html'
-    context = {'ingredients': ingredients_list}
     response = HttpResponse(content_type='application/pdf')
     response[
         'Content-Disposition'] = 'attachment; filename="my_shopping_list.pdf"'
     template = get_template(template_path)
+    context = generate_data_for_shopping_list(request)
     html = template.render(context)
     pisa_status = pisa.CreatePDF(html, dest=response, encoding='UTF-8')
     return response
