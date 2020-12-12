@@ -58,7 +58,7 @@
                 </li>
                 <li class="single-card__item">
                     {% if user.is_authenticated and user != author %}
-                        {% if author|check_following:user %}
+                        {% if author|is_following:user %}
                             <button class="button button_style_light-blue button_size_subscribe" name="subscribe">Unfollow</button>
                         {% else %}
                            <button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Follow</button>

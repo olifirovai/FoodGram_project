@@ -11,7 +11,7 @@ def addclass(field, css):
 
 
 @register.filter(name='check_following')
-def check_following(author, user):
+def is_following(author, user):
     follow = Follow.objects.get_follow(author, user)
     return follow
 
