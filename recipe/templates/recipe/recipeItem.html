@@ -9,19 +9,19 @@
             <img src="{{ im.url }}" alt="{{ recipe.name }}" class="card__image" width="364" height="240"></a>
         {% endthumbnail %}
     {% endif %}
-<div class="card__body">
-    <a class="card__title link" href="{% url "recipe" recipe.author.username recipe.slug %}" target="_self">{{ recipe.name }}</a>
-        <ul class="card__items">
-            {% for type in recipe.type.all %}
-                <li class="card__item"><span class="badge badge_style_{{ type.color }}">{{ type.type_name|capfirst}}</span></li>
-            {% endfor %}
-        </ul>
+    <div class="card__body">
+        <a class="card__title link" href="{% url "recipe" recipe.author.username recipe.slug %}" target="_self">{{ recipe.name }}</a>
+            <ul class="card__items">
+                {% for type in recipe.type.all %}
+                    <li class="card__item"><span class="badge badge_style_{{ type.color }}">{{ type.type_name|capfirst}}</span></li>
+                {% endfor %}
+            </ul>
 
-    <div class="card__items card__items_column">
-        <p class="card__text"><span class="icon-time"></span> {{ recipe.cook_time|duration_format }}</p>
-        <p class="card__text"><span class="icon-user"></span> <a href= "{% url "user_profile" recipe.author.username %}" style="color: black">{{ recipe.author|author_name }}</a></p>
+        <div class="card__items card__items_column">
+            <p class="card__text"><span class="icon-time"></span> {{ recipe.cook_time|duration_format }}</p>
+            <p class="card__text"><span class="icon-user"></span> <a href= "{% url "user_profile" recipe.author.username %}" style="color: black">{{ recipe.author|author_name }}</a></p>
+        </div>
     </div>
-</div>
 {% if user.is_authenticated %}
     <div class="card__footer">
 

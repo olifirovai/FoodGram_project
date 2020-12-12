@@ -53,21 +53,19 @@ class RecipeType(models.Model):
 
 class RecipeManager(models.Manager):
 
-    def get_index_in_types(self, exclude_types):
-        types = RecipeType.objects.exclude(type_name__in=exclude_types)
+    def get_index_in_types(self, types):
         return self.get_queryset().filter(type__in=types).distinct()
-
 
     def get_author_recipes_in_types(self, author, types):
         return self.get_queryset().filter(author=author,
-                                          type__type_name__in=types).distinct()
+                                          type__in=types).distinct()
 
     def get_favorite_recipes(self, user):
         return self.get_queryset().filter(favorite_recipe__user=user)
 
     def get_favorite_in_types(self, user, types):
         return self.get_favorite_recipes(user).filter(
-            type__type_name__in=types).distinct()
+            type__in=types).distinct()
 
 
 class Recipe(models.Model):

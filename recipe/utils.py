@@ -1,35 +1,15 @@
-from .models import Recipe, RecipeType
+from .models import RecipeType
 
 
-def get_url_with_types(request, types):
-    if types:
-        url_type_line = f'{request.GET.urlencode()}&'
-
-    else:
-        url_type_line = ''
-    print(types)
+def get_url_with_types(request):
+    url_type_line = f'{request.GET.urlencode()}&'
     return url_type_line
 
 
-def collect_data_with_types():
-    pass
-
-
 def get_filter_type(request):
-    types = request.GET.getlist('type_exclude')
-    print(f'types={type(types)}')
-    # types = RecipeType.objects
-    print(types)
-
+    exclude_types = request.GET.getlist('type_exclude')
+    types = RecipeType.objects.exclude(type_name__in=exclude_types)
     return types
-
-
-def favorite_filter_tag(request):
-    types = request.GET.get('type', 'breakfast,lunch,dinner,')
-    url_type_line = types
-    types = types[:-1].split(',')
-    recipe_list = Recipe.objects.get_favorite_in_types(request.user, types)
-    return recipe_list, types, url_type_line
 
 
 def get_types(data):
@@ -38,7 +18,6 @@ def get_types(data):
     for key in data:
         if data[key] == 'on':
             types_list.append(key)
-    print(types_list)
     return types_list
 
 

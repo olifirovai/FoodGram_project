@@ -4,13 +4,13 @@
     <li class="tags__item">
         <a  id="{{ type.type_name }}"
             class="tags__checkbox tags__checkbox_style_{{ type.color }}
-                {% if not type.type_name in given_types %}tags__checkbox_active{% endif %}"
-            href="?{% if type.type_name in given_types %}
+                {% if type in given_types %}tags__checkbox_active{% endif %}"
+            href="?{% if type in given_types %}
+{{ url_type_line|add_type_to_url:type.type_name }}
+{% else %}
 {% with url_type=type.type_name|get_type_url %}
 {{ url_type_line|cut:url_type }}
-{% endwith %}
-{% else %}
-{{ url_type_line|add_type_to_url:type.type_name }}{% endif %}">
+{% endwith %}{% endif %}">
         </a>
         <span class="tags__label">{{ type.type_name|capfirst }} </span>
     </li>

@@ -17,11 +17,13 @@ from .forms import RecipeForm
 from .models import (Recipe, ShoppingList, FavoriteRecipe, RecipeIngredient,
                      RecipeType, RecipeTypeMapping, Ingredient, )
 from .utils import (get_ingredients, get_types, get_filter_type,
-                    favorite_filter_tag, get_url_with_types, )
+                    get_url_with_types,
+                    )
+
 
 def get_recipe_list_by_type(types, *args, **kwargs):
-
     pass
+
 
 def get_ingredients_js(request):
     text = request.GET.get('query')
@@ -36,12 +38,12 @@ def get_ingredients_js(request):
 def index(request):
     given_types = get_filter_type(request)
     recipe_list = Recipe.objects.get_index_in_types(given_types)
-    url_type_line = get_url_with_types(request, given_types)
-    types = RecipeType.objects.all()
+    url_type_line = get_url_with_types(request)
+    all_types = RecipeType.objects.all()
     paginator = Paginator(recipe_list, OBJECT_PER_PAGE)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
-    data = {'paginator': paginator, 'page': page, 'types': types,
+    data = {'paginator': paginator, 'page': page, 'types': all_types,
             'given_types': given_types, 'url_type_line': url_type_line}
     return render(request, 'index.html', data)
 
@@ -157,12 +159,16 @@ def recipe_delete(request, username, slug):
 
 @login_required
 def favorite_recipes(request):
-    recipe_list, given_types, url_type_line = favorite_filter_tag(request)
-    types = RecipeType.objects.all()
+    given_types = get_filter_type(request)
+    recipe_list = Recipe.objects.get_favorite_in_types(request.user,
+                                                       given_types)
+    url_type_line = get_url_with_types(request)
+
+    all_types = RecipeType.objects.all()
     paginator = Paginator(recipe_list, OBJECT_PER_PAGE)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
-    data = {'page': page, 'paginator': paginator, 'types': types,
+    data = {'page': page, 'paginator': paginator, 'types': all_types,
             'given_types': given_types, 'url_type_line': url_type_line}
     return render(request, 'recipe/favorite.html', data)
 

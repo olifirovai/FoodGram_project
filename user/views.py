@@ -10,10 +10,10 @@ from django.views.decorators.http import (require_http_methods,
 from django.views.generic import CreateView
 
 from foodgram.settings import OBJECT_PER_PAGE
-from recipe.models import RecipeType
+from recipe.models import RecipeType, Recipe
+from recipe.utils import (get_filter_type, get_url_with_types, )
 from .forms import CreationForm
 from .models import User, Follow
-from .utils import get_filter_by_type_on_author_page
 
 
 class SignUpView(CreateView):
@@ -24,15 +24,16 @@ class SignUpView(CreateView):
 
 def user_profile(request, username):
     author = get_object_or_404(User, username=username)
-    recipe_list, given_types, url_type_line = get_filter_by_type_on_author_page(
-        request,
-        author)
-    types = RecipeType.objects.all()
+    given_types = get_filter_type(request)
+    recipe_list = Recipe.objects.get_author_recipes_in_types(author,
+                                                             given_types)
+    url_type_line = get_url_with_types(request)
+    all_types = RecipeType.objects.all()
     paginator = Paginator(recipe_list, OBJECT_PER_PAGE)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
     data = {'author': author, 'paginator': paginator,
-            'page': page, 'recipes': recipe_list, 'types': types,
+            'page': page, 'recipes': recipe_list, 'types': all_types,
             'given_types': given_types, 'url_type_line': url_type_line}
     return render(request, 'user/author_page.html', data)
 
