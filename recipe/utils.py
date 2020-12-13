@@ -14,7 +14,6 @@ def get_filter_type(request):
 
 def get_types(data):
     types_list = []
-    print(data)
     for key in data:
         if key != 'picture' and key != 'picture-clear':
             if data[key] == 'on':
