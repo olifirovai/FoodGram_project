@@ -164,9 +164,7 @@ class ShoppingListManager(models.Manager):
 
     def get_weights_in_shopping_list(self, user):
         users_recipe = self.get_shopping_list(user)
-        print(users_recipe)
         recipe = [recipe.recipe for recipe in users_recipe]
-        print(recipe)
         weights_list = RecipeIngredient.objects.filter(
             recipe__in=recipe
         ).values(

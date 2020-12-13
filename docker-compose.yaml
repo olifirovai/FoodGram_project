@@ -17,7 +17,7 @@ services:
     image: iolifirova/foodgram:latest
     restart: always
     volumes:
-      - static_volume:/code/static
+      - static_volume:/code/staticfiles
       - media_volume:/code/media
     depends_on:
       - db
@@ -29,10 +29,10 @@ services:
     depends_on:
       - web
     ports:
-      - "8000:80"
+      - 8000:80
     volumes:
       - ./nginx:/etc/nginx/conf.d
-      - static_volume:/code/static
+      - static_volume:/code/staticfiles
       - media_volume:/code/media
     restart: always
 

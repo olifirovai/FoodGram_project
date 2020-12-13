@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load user_filters recipe_filters %}
-{% block title %} Recipes by {{ author|author_name}}{% endblock %}
+{% block title %} Recipes by {{ author|name_format}}{% endblock %}
 {% load static %}
 {% block static %}
     <link rel="stylesheet" href="{% static "/pages/index.css" %}">
@@ -12,7 +12,7 @@
             {% if user.is_authenticated and user == author%}
                 <h1 class="main__title">My Page</h1>
             {% else %}
-                <h1 class="main__title">{{ author|author_name }}</h1>
+                <h1 class="main__title">{{ author|name_format }}</h1>
             {% endif %}
             {% include "recipe/page_types.html" %}
 
