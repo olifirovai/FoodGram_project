@@ -9,8 +9,8 @@ class RecipeForm(ModelForm):
         fields = (
             'name', 'directions', 'cook_time', 'picture'
         )
+
         labels = {
-            'name': 'Recipe title',
-            'directions': 'Directions', 'cook_time': 'Total cooking time',
-            'picture': 'Add an image'
+            'name': 'Recipe title', 'cook_time': 'Total cooking time',
+            'directions': 'Directions', 'picture': 'Add an image'
         }

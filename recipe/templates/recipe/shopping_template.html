@@ -46,8 +46,8 @@
             <tbody class="u-table-alt-palette-1-light-3 u-table-body">
             {% for ingredient in ingredients %}
               <tr style="height: 65px;">
-                <td class="u-table-cell">{{ ingredient|ingredients:1 }}</td>
-                <td class="u-table-cell">{{ ingredient|ingredients:2 }} - {{ ingredient|ingredients:3 }}</td>
+                <td class="u-table-cell">{{ ingredient|ingredients:'ingredient__name' }}</td>
+                <td class="u-table-cell">{{ ingredient|ingredients:'weight__sum' }} - {{ ingredient|ingredients:'ingredient__measure' }}</td>
                 <td class="u-table-cell"></td>
               </tr>
             {% endfor %}

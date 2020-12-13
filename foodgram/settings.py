@@ -16,9 +16,9 @@ THUMBNAIL_DEBUG = True
 ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
+    'django.contrib.flatpages',
     'user',
     'recipe',
-    'ingredients',
     'import_export',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -27,6 +27,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'sorl.thumbnail',
+    'django.contrib.sites',
+
 ]
 
 MIDDLEWARE = [
@@ -123,3 +125,11 @@ CACHES = {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
     }
 }
+
+SITE_ID = 2
+
+OBJECT_PER_PAGE = 6
+
+EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
+
+EMAIL_FILE_PATH = os.path.join(BASE_DIR, "sent_emails")

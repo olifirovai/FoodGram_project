@@ -32,6 +32,7 @@
                 <p class="form__label">Recipe Type</p>
                 <div class="form__field-group">
                     <div class="tags">
+
                         {% for type in types %}
                             <div class="tags__item">
                                 <input type="checkbox" name="{{ type.type_name }}" id="id_{{ type.type_name }}" class="tags__checkbox tags__checkbox_style_{{ type.color }}"
@@ -40,7 +41,17 @@
                             </div>
                         {% endfor %}
                     </div>
-                    <span class="form__error"></span>
+                    <span class="form__error">
+                    {% if form.non_field_errors  %}
+                    {%  for error in form.non_field_errors %}
+                        {% if error == 'Add at least one type'%}
+                            <div class="non-field-errors">
+                                <p class="form-error">{{ error }}</p>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                    {% endif %}
+                    </span>
                 </div>
             </div>
 
@@ -69,6 +80,17 @@
                         {% endif %}
                     </div>
                     <span class="form__ingredient-link" id="addIng">Add ingredient</span>
+                    <span class="form__error">
+                    {% if form.non_field_errors  %}
+                    {%  for error in form.non_field_errors %}
+                        {% if error == 'Add at least one ingredient' %}
+                            <div class="non-field-errors">
+                                <p class="form-error">{{ error }}</p>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                    {% endif %}
+                    </span>
                 </div>
             </div>
 

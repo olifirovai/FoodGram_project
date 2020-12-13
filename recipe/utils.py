@@ -1,29 +1,24 @@
-from .models import Recipe
+from .models import RecipeType, RecipeTypeMapping, RecipeIngredient, Ingredient
 
 
-def index_filter_tag(request):
-    types = request.GET.get('type', 'breakfast,lunch,dinner,')
-    url_type_line = types
-    types = types[:-1].split(',')
-    recipe_list = Recipe.objects.get_index_in_types(types)
-    return recipe_list, types, url_type_line
+def get_url_with_types(request):
+    url_type_line = f'{request.GET.urlencode()}&'
+    return url_type_line
 
 
-def favorite_filter_tag(request):
-    types = request.GET.get('type', 'breakfast,lunch,dinner,')
-    url_type_line = types
-    types = types[:-1].split(',')
-    recipe_list = Recipe.objects.get_favorite_in_types(request.user, types)
-    return recipe_list, types, url_type_line
+def get_filter_type(request):
+    exclude_types = request.GET.getlist('type_exclude')
+    types = RecipeType.objects.exclude(type_name__in=exclude_types)
+    return types
 
 
 def get_types(data):
     types_list = []
-
+    print(data)
     for key in data:
-        if data[key] == 'on':
-            types_list.append(key)
-    print(f'types_list={types_list} in get_types')
+        if key != 'picture' and key != 'picture-clear':
+            if data[key] == 'on':
+                types_list.append(key)
     return types_list
 
 
@@ -45,3 +40,19 @@ def get_ingredients(data):
         )
 
     return ingredients
+
+
+def save_types_and_ingredients(recipe, types, ingredients):
+    for type in types:
+        recipe_type = RecipeTypeMapping(
+            recipe=recipe, type=RecipeType.objects.get(type_name=type)
+        )
+        recipe_type.save()
+
+    for item in ingredients:
+        recipe_ing = RecipeIngredient(
+            weight=item.get('weight'), recipe=recipe,
+            ingredient=Ingredient.objects.get(name=item.get('name'))
+
+        )
+        recipe_ing.save()
