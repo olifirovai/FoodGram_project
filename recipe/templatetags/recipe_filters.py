@@ -56,8 +56,8 @@ def recipe_shopping_count(user):
 
 
 @register.filter()
-def ingredients(list, i):
-    return list[i]
+def ingredients(ingredients, i):
+    return ingredients[i]
 
 
 @register.filter()

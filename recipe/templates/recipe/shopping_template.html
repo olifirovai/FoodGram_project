@@ -1,4 +1,3 @@
-{# TODO this is ingredients in table, static doesn't work correctly=( #}
 <!DOCTYPE html>
 {% load static %}
 <link rel="stylesheet" href="{% static "/blocks/shopping-list/nicepage.css"%}" media="screen">
@@ -46,8 +45,8 @@
             <tbody class="u-table-alt-palette-1-light-3 u-table-body">
             {% for ingredient in ingredients %}
               <tr style="height: 65px;">
-                <td class="u-table-cell">{{ ingredient|ingredients:'ingredient__name' }}</td>
-                <td class="u-table-cell">{{ ingredient|ingredients:'weight__sum' }} - {{ ingredient|ingredients:'ingredient__measure' }}</td>
+                <td class="u-table-cell">{{ ingredient|ingredients:'ingredient' }}</td>
+                <td class="u-table-cell">{{ ingredient|ingredients:'total_weight' }} - {{ ingredient|ingredients:'measurement' }}</td>
                 <td class="u-table-cell"></td>
               </tr>
             {% endfor %}
