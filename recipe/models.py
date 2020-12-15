@@ -3,6 +3,7 @@ import string
 
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.db.models import F
 from django.db.models import Sum
 from django.utils.text import slugify
 
@@ -164,14 +165,15 @@ class ShoppingListManager(models.Manager):
 
     def get_weights_in_shopping_list(self, user):
         users_recipe = self.get_shopping_list(user)
-        recipe = [recipe.recipe for recipe in users_recipe]
-        weights_list = RecipeIngredient.objects.filter(
-            recipe__in=recipe
-        ).values(
-            'ingredient__name', 'ingredient__measure'
-        ).annotate(
-            Sum('weight')
-        )
+        ingredient_name = 'recipe__recipe_ingredient__ingredient__name'
+        ingredient_weight = 'recipe__recipe_ingredient__weight'
+        ingredient_measure = 'recipe__recipe_ingredient__ingredient__measure'
+        weights_list = users_recipe.values(ingredient_name).annotate(
+            Sum(ingredient_weight)).order_by(ingredient_name,
+                                             ingredient_measure).values(
+            ingredient=F(ingredient_name),
+            total_weight=F(f'{ingredient_weight}__sum'),
+            measurement=F(ingredient_measure))
         return weights_list
 
 

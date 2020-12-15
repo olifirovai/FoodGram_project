@@ -3,6 +3,7 @@ import json
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator
+from django.db.models import F
 from django.http import HttpResponse
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -22,13 +23,9 @@ from .utils import (get_ingredients, get_types, get_filter_type,
 
 def get_ingredients_js(request):
     text = request.GET.get('query')
-    data = []
-    ingredients = Ingredient.objects.filter(name__startswith=text).values(
-        'name', 'measure')
-    for ingredient in ingredients:
-        data.append(
-            {'title': ingredient['name'], 'dimension': ingredient['measure']})
-    return JsonResponse(data, safe=False)
+    ingredients = list(Ingredient.objects.filter(name__startswith=text).values(
+        title=F('name'), dimension=F('measure')))
+    return JsonResponse(ingredients, safe=False)
 
 
 def index(request):
