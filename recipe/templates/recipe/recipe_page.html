@@ -43,18 +43,20 @@
                 <p class="single-card__text"><span class="icon-time"></span> {{ recipe.cook_time|duration_format }}</p>
                 <ul class="single-card__items">
                     <li class="single-card__item"><p class="single-card__text"><span class="icon-user"></span> <a style="color: black" href="{% url "user_profile" author.username %}" target="_self">{{ author|name_format }}</a></p></li>
-                    {% if user == author %}
+                    {% if user.is_authenticated and user == author %}
                         <li class="single-card__item">  <a style="margin-left: 2.5em" href="{% url "edit_recipe" recipe.author.username recipe.slug  %}" class="single-card__text">Edit recipe</a></li>
                     {% endif %}
                 </ul>
             </div>
             <ul class="single-card__items">
                 <li class="single-card__item">
+                {% if user.is_authenticated %}
                     {% if user|is_in_shopping:recipe %}
                         <button class="button button_style_light-blue-outline" name="purchases"><span class="icon-check button__icon"></span> Recipe added</button>
                     {% else %}
                         <button class="button button_style_blue" name="purchases" data-out><span class="icon-plus button__icon"></span>Add to my shopping list</button>
                     {% endif %}
+                {% endif %}
                 </li>
                 <li class="single-card__item">
                     {% if user.is_authenticated and user != author %}
