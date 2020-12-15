@@ -38,7 +38,7 @@ class FollowManager(models.Manager):
         return self.get_queryset().filter(author=author, user=user)
 
     def get_follow_list(self, user):
-        return self.get_queryset().filter(author__following__user=user)
+        return self.get_queryset().filter(user__follower__user=user)
 
 
 class Follow(models.Model):
