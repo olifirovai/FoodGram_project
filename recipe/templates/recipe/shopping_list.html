@@ -27,7 +27,7 @@
                                 <img src="{{ im.url }}" alt="{{ list.recipe.name }}" class="recipe__image recipe__image_big" width="364" height="240"></a>
                             {% endthumbnail %}
                         {% endif %}
-                        <h3 class="recipe__title">{{ list.recipe.name }}</h3>
+                        <h3 class="recipe__title"><a class="recipe__title" href="{% url "recipe" list.recipe.author.username list.recipe.slug %}" target="_self">{{ list.recipe.name }}</a></h3>
                         <p class="recipe__text"><span class="icon-time"></span> {{ list.recipe.cook_time|duration_format }}</p>
                     </div>
                     <button class="button shopping-list__button link">Remove</button>
