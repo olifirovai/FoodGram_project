@@ -79,13 +79,14 @@ def recipe_create(request):
                 save_ingredients(recipe, ingredients)
                 recipe_form.save_m2m()
                 '''
-                If the database will give us an IntegrityError, we should return 
-                previous fill in data to the user with error message
+                If the database will give us an IntegrityError, we should 
+                return previous fill in data to the user with error message
                 '''
             except IntegrityError:
                 recipe_form = RecipeForm(instance=recipe)
                 data = {'form': recipe_form,
-                        'message': 'Weight should more then 0', 'types': types,
+                        'message': 'Weight should be more then 0',
+                        'types': types,
                         'weight_error': True, 'recipe': recipe,
                         'cur_types': recipe_types}
                 recipe.delete()
@@ -138,8 +139,9 @@ def recipe_edit(request, username, slug):
                     current_ingredients.delete()
                     recipe_form.save_m2m()
                     '''
-                    If the database will give us an IntegrityError, we should return 
-                    previous recipe's data to the user with error message
+                    If the database will give us an IntegrityError, we should 
+                    return previous recipe's data to the user with 
+                    error message
                     '''
                 except IntegrityError:
                     recipe_form = RecipeForm(instance=recipe)
