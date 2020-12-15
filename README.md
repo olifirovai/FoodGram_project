@@ -3,7 +3,7 @@
 foodgram-project
 
 ## Site url:
-[84.201.178.161/recipes/](http://84.201.178.161/recipes/)
+[lucky-recipes.ml//recipes/](http://lucky-recipes.ml/recipes/)
 
 ## Starting docker-compose:
 ```
