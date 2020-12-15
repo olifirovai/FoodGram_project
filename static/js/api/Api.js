@@ -5,7 +5,7 @@ class Api {
         this.apiUrl =  apiUrl;
     }
   getPurchases () {
-    return fetch(`/recipes/purchases`, {
+    return fetch(`/purchases`, {
       headers: {
         'Content-Type': 'application/json'
       }
@@ -18,7 +18,7 @@ class Api {
       })
   }
   addPurchases (id) {
-    return fetch(`/recipes/purchases`, {
+    return fetch(`/purchases`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -36,7 +36,7 @@ class Api {
       })
   }
   removePurchases (id){
-    return fetch(`/recipes/purchases/${id}`, {
+    return fetch(`/purchases/${id}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -84,7 +84,7 @@ class Api {
       })
   }
   addFavorites (id)  {
-    return fetch(`/recipes/favorites`, {
+    return fetch(`/favorites`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -102,7 +102,7 @@ class Api {
         })
   }
   removeFavorites (id) {
-    return fetch(`/recipes/favorites/${id}`, {
+    return fetch(`/favorites/${id}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -117,7 +117,7 @@ class Api {
         })
   }
     getIngredients  (text)  {
-        return fetch(`/recipes/ingredients?query=${text}`, {
+        return fetch(`/ingredients?query=${text}`, {
             headers: {
                 'Content-Type': 'application/json'
             }

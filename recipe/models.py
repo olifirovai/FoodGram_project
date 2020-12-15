@@ -80,7 +80,7 @@ class Recipe(models.Model):
     directions = models.TextField()
     post_date = models.DateTimeField(auto_now=True, db_index=True,
                                      verbose_name='publishing date')
-    cook_time = models.IntegerField(
+    cook_time = models.PositiveSmallIntegerField(
         verbose_name='cook time', null=False,
         validators=[MinValueValidator(1)], default=10,
         help_text='Add cook time in minutes'
@@ -114,7 +114,7 @@ class RecipeIngredient(models.Model):
                                related_name='recipe_ingredient')
     ingredient = models.ForeignKey(Ingredient, on_delete=models.PROTECT,
                                    related_name='recipe_ingredient')
-    weight = models.IntegerField(
+    weight = models.PositiveSmallIntegerField(
         verbose_name='ingredient weight', null=False,
         validators=[MinValueValidator(1)], default=10,
         help_text='Add needed weight for the recipe'

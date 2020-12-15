@@ -7,11 +7,11 @@ const configButton = {
         attr: 'data-out',
         default: {
             class: 'button_style_blue',
-            text: 'Unfollow'
+            text: 'Follow this author'
         },
         active: {
             class: 'button_style_blue',
-            text: `Follow this author`
+            text: `Unfollow`
         }
     }
 }

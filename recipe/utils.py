@@ -41,13 +41,7 @@ def get_ingredients(data):
     return ingredients
 
 
-def save_types_and_ingredients(recipe, types, ingredients):
-    for type in types:
-        recipe_type = RecipeTypeMapping(
-            recipe=recipe, type=RecipeType.objects.get(type_name=type)
-        )
-        recipe_type.save()
-
+def save_ingredients(recipe, ingredients):
     for item in ingredients:
         recipe_ing = RecipeIngredient(
             weight=item.get('weight'), recipe=recipe,
@@ -55,3 +49,11 @@ def save_types_and_ingredients(recipe, types, ingredients):
 
         )
         recipe_ing.save()
+
+
+def save_types(recipe, types):
+    for type in types:
+        recipe_type = RecipeTypeMapping(
+            recipe=recipe, type=RecipeType.objects.get(type_name=type)
+        )
+        recipe_type.save()
