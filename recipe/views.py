@@ -3,6 +3,7 @@ import json
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator
+from django.db import IntegrityError
 from django.db.models import F
 from django.http import HttpResponse
 from django.http import JsonResponse
@@ -18,7 +19,7 @@ from .forms import RecipeForm
 from .models import (Recipe, ShoppingList, FavoriteRecipe, RecipeIngredient,
                      RecipeType, RecipeTypeMapping, Ingredient, )
 from .utils import (get_ingredients, get_types, get_filter_type,
-                    get_url_with_types, save_types_and_ingredients, )
+                    get_url_with_types, save_types, save_ingredients, )
 
 
 def get_ingredients_js(request):
@@ -52,28 +53,51 @@ def recipe_view(request, username, slug):
 def recipe_create(request):
     types = RecipeType.objects.all()
     if request.method == 'POST':
-        form = RecipeForm(request.POST or None, files=request.FILES or None)
+        recipe_form = RecipeForm(request.POST or None,
+                                 files=request.FILES or None)
         ingredients = get_ingredients(request.POST)
         recipe_types = get_types(request.POST)
         if not recipe_types:
-            form.add_error(None, ValidationError('Add at least one type'))
+            recipe_form.add_error(None,
+                                  ValidationError('Add at least one type'))
         if not ingredients:
-            form.add_error(None,
-                           ValidationError('Add at least one ingredient'))
+            recipe_form.add_error(None,
+                                  ValidationError(
+                                      'Add at least one ingredient'))
 
-        if form.is_valid():
-            recipe = form.save(commit=False)
+        if recipe_form.is_valid():
+            recipe = recipe_form.save(commit=False)
             recipe.author = request.user
             recipe.save()
-            save_types_and_ingredients(recipe, recipe_types,
-                                       ingredients)
-            form.save_m2m()
+            save_types(recipe, recipe_types)
+            recipe_form.save_m2m()
+            '''
+            As an ingredient weight was took directly from POST request 
+            we should try whereas the weight amount is more then 0
+            '''
+            try:
+                save_ingredients(recipe, ingredients)
+                recipe_form.save_m2m()
+                '''
+                If the database will give us an IntegrityError, we should return 
+                previous fill in data to the user with error message
+                '''
+            except IntegrityError:
+                recipe_form = RecipeForm(instance=recipe)
+                data = {'form': recipe_form,
+                        'message': 'Weight should more then 0', 'types': types,
+                        'weight_error': True, 'recipe': recipe,
+                        'cur_types': recipe_types}
+                recipe.delete()
+                return render(request, 'recipe/recipe_form.html', data)
+
             return redirect('recipe', username=request.user.username,
                             slug=recipe.slug)
 
     else:
-        form = RecipeForm()
-    data = {'form': form, 'types': types}
+        recipe_form = RecipeForm()
+
+    data = {'form': recipe_form, 'types': types}
     return render(request, 'recipe/recipe_form.html', data)
 
 
@@ -85,32 +109,56 @@ def recipe_edit(request, username, slug):
         current_ingredients = RecipeIngredient.objects.filter(recipe=recipe)
         current_types = RecipeTypeMapping.objects.filter(recipe=recipe)
         types = RecipeType.objects.all()
-        form = RecipeForm(request.POST or None, files=request.FILES or None,
-                          instance=recipe)
-
+        recipe_form = RecipeForm(request.POST or None,
+                                 files=request.FILES or None,
+                                 instance=recipe)
         if request.method == 'POST':
             recipe_types = get_types(request.POST)
             ingredients = get_ingredients(request.POST)
 
             if not recipe_types:
-                form.add_error(None, ValidationError('Add at least one type'))
+                recipe_form.add_error(None,
+                                      ValidationError('Add at least one type'))
             if not ingredients:
-                form.add_error(None,
-                               ValidationError('Add at least one ingredient'))
+                recipe_form.add_error(None,
+                                      ValidationError(
+                                          'Add at least one ingredient'))
 
-            if form.is_valid():
+            if recipe_form.is_valid():
                 current_types.delete()
-                current_ingredients.delete()
-                recipe = form.save(commit=False)
-                save_types_and_ingredients(recipe, recipe_types, ingredients)
-                form.save_m2m()
+                recipe = recipe_form.save(commit=False)
+                save_types(recipe, recipe_types)
+                recipe_form.save_m2m()
+                '''
+                As an ingredient weight was took directly from POST request 
+                we should try whereas the weight amount is more then 0
+                '''
+                try:
+                    save_ingredients(recipe, ingredients)
+                    current_ingredients.delete()
+                    recipe_form.save_m2m()
+                    '''
+                    If the database will give us an IntegrityError, we should return 
+                    previous recipe's data to the user with error message
+                    '''
+                except IntegrityError:
+                    recipe_form = RecipeForm(instance=recipe)
+                    data = {'form': recipe_form,
+                            'message': 'Weight should be more then 0',
+                            'types': types,
+                            'weight_error': True, 'recipe': recipe,
+                            'cur_types': recipe_types,
+                            'weight_error_edit': True}
+                    return render(request, 'recipe/recipe_form.html', data)
+
                 return redirect('recipe', username=recipe.author,
                                 slug=recipe.slug)
 
         else:
-            form = RecipeForm(instance=recipe)
-        data = {'form': form, 'edit': True, 'author': author, 'recipe': recipe,
-                'types': types}
+            recipe_form = RecipeForm(instance=recipe)
+        data = {'form': recipe_form, 'edit': True, 'author': author,
+                'recipe': recipe,
+                'types': types, }
         return render(request, 'recipe/recipe_form.html', data)
 
     else:

@@ -36,7 +36,7 @@
                         {% for type in types %}
                             <div class="tags__item">
                                 <input type="checkbox" name="{{ type.type_name }}" id="id_{{ type.type_name }}" class="tags__checkbox tags__checkbox_style_{{ type.color }}"
-                                    {% if edit %} {% if type|is_in_type:recipe %} checked {% endif %}{% endif %}>
+                                    {% if edit %} {% if type|is_in_type:recipe %} checked {% endif %}{% endif %}{% if weight_error %} {% if type.type_name in cur_types %} checked {% endif %}{% endif %}>
                                 <label for="id_{{ type.type_name }}" class="tags__label">{{ type.type_name|capfirst }}</label>
                             </div>
                         {% endfor %}
@@ -65,9 +65,10 @@
                         </div>
                         <input type="number" id="cantidad" class="form__input" min="0">
                         <label for="cantidad" class="form__label" id="cantidadVal"></label>
+                        {% if message %}<div class="non-field-errors" style="color: red">{{ message }}</div>{% endif %}
                     </div>
                     <div class="form__field-group-ingredientes-container">
-                        {% if edit %}
+                        {% if edit or weight_error_edit%}
                             {% for ingredient_item in recipe.recipe_ingredient.all %}
                                 <div class="form__field-item-ingredient" id="ing_{{ ingredient_item.id }}">
                                     <span> {{ ingredient_item.ingredient.name }}</span>
