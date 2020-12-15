@@ -71,17 +71,15 @@ def recipe_create(request):
             recipe.save()
             save_types(recipe, recipe_types)
             recipe_form.save_m2m()
-            '''
-            As an ingredient weight was took directly from POST request 
-            we should try whereas the weight amount is more then 0
-            '''
+
+            # As an ingredient weight was took directly from POST request
+            # we should try whereas the weight amount is more then 0
             try:
                 save_ingredients(recipe, ingredients)
                 recipe_form.save_m2m()
-                '''
-                If the database will give us an IntegrityError, we should 
-                return previous fill in data to the user with error message
-                '''
+
+                # If the database will give us an IntegrityError, we should
+                # return previous fill in data to the user with error message
             except IntegrityError:
                 recipe_form = RecipeForm(instance=recipe)
                 data = {'form': recipe_form,
@@ -130,19 +128,17 @@ def recipe_edit(request, username, slug):
                 recipe = recipe_form.save(commit=False)
                 save_types(recipe, recipe_types)
                 recipe_form.save_m2m()
-                '''
-                As an ingredient weight was took directly from POST request 
-                we should try whereas the weight amount is more then 0
-                '''
+
+                # As an ingredient weight was took directly from POST request
+                # we should try whereas the weight amount is more then 0
                 try:
                     save_ingredients(recipe, ingredients)
                     current_ingredients.delete()
                     recipe_form.save_m2m()
-                    '''
-                    If the database will give us an IntegrityError, we should 
-                    return previous recipe's data to the user with 
-                    error message
-                    '''
+
+                    # If the database will give us an IntegrityError, we should
+                    # return previous recipe's data to the user with
+                    # error message
                 except IntegrityError:
                     recipe_form = RecipeForm(instance=recipe)
                     data = {'form': recipe_form,
