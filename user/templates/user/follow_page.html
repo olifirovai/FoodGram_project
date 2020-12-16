@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %} Friends {% endblock %}
+{% block title %} Subscriptions {% endblock %}
 {% load static %}
 {% block static %}
     <link rel="stylesheet" href="{% static "/pages/myFollow.css" %}">
@@ -7,10 +7,10 @@
 
 {% block content %}
     {% load recipe_filters user_filters %}
-    {% include "nav.html" with active_page="friends"%}
+    {% include "nav.html" with active_page="subscriptions"%}
     <main class="main container">
         <div class="main__header">
-            <h1 class="main__title">My friends</h1>
+            <h1 class="main__title">My subscriptions</h1>
         </div>
         <div class="card-list">
             {% for item in page %}

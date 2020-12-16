@@ -31,10 +31,13 @@ def get_ingredients_js(request):
 
 def index(request):
     given_types = get_filter_type(request)
+    no_chosen_types = False
     if given_types is None:
         recipe_list = Recipe.objects.all()
     else:
         types = RecipeType.objects.filter(id__in=given_types)
+        if not types:
+            no_chosen_types = True
         recipe_list = Recipe.objects.get_index_in_types(types)
     url_type_line = get_url_with_types(request)
     all_types = RecipeType.objects.all()
@@ -42,7 +45,8 @@ def index(request):
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
     data = {'paginator': paginator, 'page': page, 'types': all_types,
-            'given_types': given_types, 'url_type_line': url_type_line}
+            'given_types': given_types, 'url_type_line': url_type_line,
+            'no_chosen_types': no_chosen_types}
     return render(request, 'index.html', data)
 
 
@@ -180,10 +184,13 @@ def recipe_delete(request, username, slug):
 @login_required
 def favorite_recipes(request):
     given_types = get_filter_type(request)
+    no_chosen_types = False
     if given_types is None:
         recipe_list = Recipe.objects.get_favorite_recipes(request.user)
     else:
         types = RecipeType.objects.filter(id__in=given_types)
+        if not types:
+            no_chosen_types = True
         recipe_list = Recipe.objects.get_favorite_in_types(request.user,
                                                            types)
     url_type_line = get_url_with_types(request)
@@ -192,7 +199,8 @@ def favorite_recipes(request):
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
     data = {'page': page, 'paginator': paginator, 'types': all_types,
-            'given_types': given_types, 'url_type_line': url_type_line}
+            'given_types': given_types, 'url_type_line': url_type_line,
+            'no_chosen_types': no_chosen_types}
     return render(request, 'recipe/favorite.html', data)
 
 
