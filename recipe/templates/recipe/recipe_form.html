@@ -10,7 +10,7 @@
 <main class="main container">
 {% load recipe_filters %}
     <div class="main__header">
-        <h1 class="main__title">{% if edit or weight_error_edit %} Edit or Delete Recipe {% else %}Create Recipe {% endif %}</h1>
+        <h1 class="main__title">{% if edit %} Edit or Delete Recipe {% else %}Create Recipe {% endif %}</h1>
     </div>
     <div class="form-container">
         <form class="form" method="post" enctype="multipart/form-data">
@@ -68,7 +68,7 @@
                         {% if message %}<div class="non-field-errors" style="color: red">{{ message }}</div>{% endif %}
                     </div>
                     <div class="form__field-group-ingredientes-container">
-                        {% if edit or weight_error_edit%}
+                        {% if edit %}
                             {% for ingredient_item in recipe.recipe_ingredient.all %}
                                 <div class="form__field-item-ingredient" id="ing_{{ ingredient_item.id }}">
                                     <span> {{ ingredient_item.ingredient.name }}</span>
@@ -124,7 +124,7 @@
                 <span class="form__label">{{ form.picture.label }}</span>
                 <div class="form__field-group">
                     {{ form.picture|addclass:"form__file-button" }}
-                    {% if form.errors %}
+                    {% if form.picture.errors %}
                         {% for error in field.errors %}
                             <span class="form__error">{{ error|escape }}</span>
                         {% endfor %}

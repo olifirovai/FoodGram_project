@@ -86,8 +86,7 @@ class Recipe(models.Model):
         help_text='Add cook time in minutes'
     )
     picture = models.ImageField(upload_to='recipe/',
-                                verbose_name='picture of the recipe',
-                                blank=True, null=True)
+                                verbose_name='picture of the recipe')
     slug = models.SlugField(max_length=250, unique=True)
     objects = RecipeManager()
 
@@ -125,6 +124,9 @@ class RecipeIngredient(models.Model):
         verbose_name = 'Recipe Ingredient'
         verbose_name_plural = 'Recipes Ingredients'
         ordering = ['recipe']
+
+    def __str__(self):
+        return f'{self.ingredient.name} {self.weight} for {self.recipe.name}'
 
 
 class RecipeTypeMapping(models.Model):

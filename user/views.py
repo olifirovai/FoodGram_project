@@ -25,8 +25,11 @@ class SignUpView(CreateView):
 def user_profile(request, username):
     author = get_object_or_404(User, username=username)
     given_types = get_filter_type(request)
-    recipe_list = Recipe.objects.get_author_recipes_in_types(author,
-                                                             given_types)
+    if given_types is None:
+        recipe_list = Recipe.objects.filter(author=author)
+    else:
+        types = RecipeType.objects.filter(id__in=given_types)
+        recipe_list = Recipe.objects.get_author_recipes_in_types(author, types)
     url_type_line = get_url_with_types(request)
     all_types = RecipeType.objects.all()
     paginator = Paginator(recipe_list, OBJECT_PER_PAGE)
