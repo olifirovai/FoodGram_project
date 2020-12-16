@@ -75,7 +75,6 @@ def recipe_create(request):
         if recipe_form.is_valid():
             recipe = recipe_form.save(commit=False)
             recipe.author = request.user
-            recipe.picture = request.FILES.get('picture')
             recipe.save()
             save_types(recipe, recipe_types)
             recipe_form.save_m2m()
@@ -129,14 +128,10 @@ def recipe_edit(request, username, slug):
                 recipe_form.add_error(None,
                                       ValidationError(
                                           'Add at least one ingredient'))
-
             if recipe_form.is_valid():
                 current_types.delete()
                 current_ingredients.delete()
                 recipe = recipe_form.save(commit=False)
-                # пришлось явно сохранять новое фото, не знаю причин, но новая
-                # картинка упорно не хотела сохраняться
-                recipe.picture = request.FILES.get('picture')
                 recipe.save()
                 save_types(recipe, recipe_types)
                 recipe_form.save_m2m()
@@ -152,8 +147,8 @@ def recipe_edit(request, username, slug):
                     # error message
                 except IntegrityError:
                     recipe_form = RecipeForm(request.POST or None,
-                                         files=request.FILES,
-                                         instance=recipe)
+                                             files=request.FILES,
+                                             instance=recipe)
                     data = {'form': recipe_form, 'edit': True,
                             'message': 'Weight should be greater than 0',
                             'types': types, 'weight_error': True,
