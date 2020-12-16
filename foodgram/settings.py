@@ -124,7 +124,7 @@ CACHES = {
     }
 }
 
-SITE_ID = 3
+SITE_ID = os.environ.get('SITE_ID')
 
 OBJECT_PER_PAGE = 6
 

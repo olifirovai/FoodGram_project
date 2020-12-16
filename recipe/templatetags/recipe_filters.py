@@ -61,15 +61,16 @@ def ingredients(ingredients, i):
 
 
 @register.filter()
-def get_type_url(type_name):
-    url_line = f'type_exclude={type_name}&'
-    return url_line
+def add_id(url, type_id):
+    url_line = str(type_id)
+    if url is None:
+        return url_line
+    return url + url_line
 
 
 @register.filter()
-def add_type_to_url(url, type_name):
-    url_line = f'type_exclude={type_name}&'
-    return url + url_line
+def string_view(type_id):
+    return str(type_id)
 
 
 @register.filter

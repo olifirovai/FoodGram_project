@@ -4,15 +4,18 @@
     <li class="tags__item">
         <a  id="{{ type.type_name }}"
             class="tags__checkbox tags__checkbox_style_{{ type.color }}
-                {% if type in given_types %}tags__checkbox_active{% endif %}"
-            href="?{% if type in given_types %}
-{{ url_type_line|add_type_to_url:type.type_name }}
+                {% if type.id|string_view in given_types %}tags__checkbox_active{% endif %}"
+            href="?type={% if type.id|string_view in given_types %}
+{% with id=type.id|string_view %}
+{{ url_type_line|cut:id }}
+{% endwith %}
 {% else %}
-{% with url_type=type.type_name|get_type_url %}
-{{ url_type_line|cut:url_type }}
+{% with id=type.id|string_view %}
+{{ url_type_line|add_id:id }}
 {% endwith %}{% endif %}">
         </a>
         <span class="tags__label">{{ type.type_name|capfirst }} </span>
     </li>
     {% endfor %}
 </ul>
+
