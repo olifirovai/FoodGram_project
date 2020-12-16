@@ -62,7 +62,7 @@ def recipe_create(request):
     types = RecipeType.objects.all()
     if request.method == 'POST':
         recipe_form = RecipeForm(request.POST or None,
-                                 files=request.FILES or None)
+                                 files=request.FILES)
         ingredients = get_ingredients(request.POST)
         recipe_types = get_types(request.POST)
         if not recipe_types:
@@ -75,6 +75,7 @@ def recipe_create(request):
         if recipe_form.is_valid():
             recipe = recipe_form.save(commit=False)
             recipe.author = request.user
+            recipe.picture = request.FILES.get('picture')
             recipe.save()
             save_types(recipe, recipe_types)
             recipe_form.save_m2m()
@@ -87,7 +88,9 @@ def recipe_create(request):
                 # If the database will give us an IntegrityError, we should
                 # return previous fill in data to the user with error message
             except IntegrityError:
-                recipe_form = RecipeForm(instance=recipe)
+                recipe_form = RecipeForm(request.POST or None,
+                                         files=request.FILES,
+                                         instance=recipe)
                 data = {'form': recipe_form, 'types': types,
                         'message': 'Weight should be greater than 0',
                         'weight_error': True, 'recipe': recipe,
@@ -114,7 +117,7 @@ def recipe_edit(request, username, slug):
         current_types = RecipeTypeMapping.objects.filter(recipe=recipe)
         types = RecipeType.objects.all()
         recipe_form = RecipeForm(request.POST or None,
-                                 files=request.FILES or None,
+                                 files=request.FILES,
                                  instance=recipe)
         if request.method == 'POST':
             recipe_types = get_types(request.POST)
@@ -148,7 +151,9 @@ def recipe_edit(request, username, slug):
                     # return previous recipe's data to the user with
                     # error message
                 except IntegrityError:
-                    recipe_form = RecipeForm(instance=recipe)
+                    recipe_form = RecipeForm(request.POST or None,
+                                         files=request.FILES,
+                                         instance=recipe)
                     data = {'form': recipe_form, 'edit': True,
                             'message': 'Weight should be greater than 0',
                             'types': types, 'weight_error': True,
