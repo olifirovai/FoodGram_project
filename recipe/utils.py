@@ -9,7 +9,7 @@ def get_url_with_types(request):
 def get_filter_type(request):
     try:
         given_types = list(request.GET.get('type'))
-    except:
+    except TypeError:
         given_types = None
     return given_types
 
