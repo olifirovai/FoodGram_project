@@ -1,9 +1,14 @@
-from django.forms import ModelForm
+from django import forms
 
 from .models import Recipe
 
 
-class RecipeForm(ModelForm):
+class RecipeForm(forms.ModelForm):
+    picture = forms.ImageField(
+        required=True,
+        label='Add an image'
+    )
+
     class Meta:
         model = Recipe
         fields = (

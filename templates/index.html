@@ -13,14 +13,19 @@
     {% include "recipe/page_types.html" with url_name="index" %}
     </div>
     <div class="card-list">
-        {% for recipe in page %}
-            {% for type in recipe.recipe_types.all %}
-                <h1 class="main__title">{{ type }}</h1>
+        {% if no_chosen_types %}
+            <h2 class="single-card__section-title" style="color: tomato">You have not chosen any recipe tags to filter, pick at least one.</h2>
+        {% else %}
+            {% for recipe in page %}
+                {% for type in recipe.recipe_types.all %}
+                    <h1 class="main__title">{{ type }}</h1>
+                {% endfor %}
+                <div class="card" data-id="{{ recipe.id }}">
+                    {% include "recipe/recipeItem.html" %}
+                </div>
             {% endfor %}
-            <div class="card" data-id="{{ recipe.id }}">
-                {% include "recipe/recipeItem.html" %}
-            </div>
-        {% endfor %}
+        {% endif %}
+
     </div>
 
     {% if page.has_other_pages %}

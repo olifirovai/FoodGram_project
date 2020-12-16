@@ -31,10 +31,13 @@ def get_ingredients_js(request):
 
 def index(request):
     given_types = get_filter_type(request)
+    no_chosen_types = False
     if given_types is None:
         recipe_list = Recipe.objects.all()
     else:
         types = RecipeType.objects.filter(id__in=given_types)
+        if not types:
+            no_chosen_types = True
         recipe_list = Recipe.objects.get_index_in_types(types)
     url_type_line = get_url_with_types(request)
     all_types = RecipeType.objects.all()
@@ -42,7 +45,8 @@ def index(request):
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
     data = {'paginator': paginator, 'page': page, 'types': all_types,
-            'given_types': given_types, 'url_type_line': url_type_line}
+            'given_types': given_types, 'url_type_line': url_type_line,
+            'no_chosen_types': no_chosen_types}
     return render(request, 'index.html', data)
 
 
@@ -58,7 +62,7 @@ def recipe_create(request):
     types = RecipeType.objects.all()
     if request.method == 'POST':
         recipe_form = RecipeForm(request.POST or None,
-                                 files=request.FILES or None)
+                                 files=request.FILES)
         ingredients = get_ingredients(request.POST)
         recipe_types = get_types(request.POST)
         if not recipe_types:
@@ -83,7 +87,9 @@ def recipe_create(request):
                 # If the database will give us an IntegrityError, we should
                 # return previous fill in data to the user with error message
             except IntegrityError:
-                recipe_form = RecipeForm(instance=recipe)
+                recipe_form = RecipeForm(request.POST or None,
+                                         files=request.FILES,
+                                         instance=recipe)
                 data = {'form': recipe_form, 'types': types,
                         'message': 'Weight should be greater than 0',
                         'weight_error': True, 'recipe': recipe,
@@ -110,7 +116,7 @@ def recipe_edit(request, username, slug):
         current_types = RecipeTypeMapping.objects.filter(recipe=recipe)
         types = RecipeType.objects.all()
         recipe_form = RecipeForm(request.POST or None,
-                                 files=request.FILES or None,
+                                 files=request.FILES,
                                  instance=recipe)
         if request.method == 'POST':
             recipe_types = get_types(request.POST)
@@ -122,14 +128,10 @@ def recipe_edit(request, username, slug):
                 recipe_form.add_error(None,
                                       ValidationError(
                                           'Add at least one ingredient'))
-
             if recipe_form.is_valid():
                 current_types.delete()
                 current_ingredients.delete()
                 recipe = recipe_form.save(commit=False)
-                # пришлось явно сохранять новое фото, не знаю причин, но новая
-                # картинка упорно не хотела сохраняться
-                recipe.picture = request.FILES.get('picture')
                 recipe.save()
                 save_types(recipe, recipe_types)
                 recipe_form.save_m2m()
@@ -144,7 +146,9 @@ def recipe_edit(request, username, slug):
                     # return previous recipe's data to the user with
                     # error message
                 except IntegrityError:
-                    recipe_form = RecipeForm(instance=recipe)
+                    recipe_form = RecipeForm(request.POST or None,
+                                             files=request.FILES,
+                                             instance=recipe)
                     data = {'form': recipe_form, 'edit': True,
                             'message': 'Weight should be greater than 0',
                             'types': types, 'weight_error': True,
@@ -180,10 +184,13 @@ def recipe_delete(request, username, slug):
 @login_required
 def favorite_recipes(request):
     given_types = get_filter_type(request)
+    no_chosen_types = False
     if given_types is None:
         recipe_list = Recipe.objects.get_favorite_recipes(request.user)
     else:
         types = RecipeType.objects.filter(id__in=given_types)
+        if not types:
+            no_chosen_types = True
         recipe_list = Recipe.objects.get_favorite_in_types(request.user,
                                                            types)
     url_type_line = get_url_with_types(request)
@@ -192,7 +199,8 @@ def favorite_recipes(request):
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
     data = {'page': page, 'paginator': paginator, 'types': all_types,
-            'given_types': given_types, 'url_type_line': url_type_line}
+            'given_types': given_types, 'url_type_line': url_type_line,
+            'no_chosen_types': no_chosen_types}
     return render(request, 'recipe/favorite.html', data)
 
 

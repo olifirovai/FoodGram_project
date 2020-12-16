@@ -5,7 +5,7 @@
                 {% if user.is_authenticated %}
                     {% load recipe_filters %}
                     <li class="nav__item {% if active_page == "index" %}nav__item_active{% endif %}"><a href="{% url "index" %}" class="nav__link link">Recipes</a></li>
-                    <li class="nav__item {% if active_page == "friends" %}nav__item_active{% endif %}"><a href="{% url "follow_page" %}" class="nav__link link">Friends</a></li>
+                    <li class="nav__item {% if active_page == "subscriptions" %}nav__item_active{% endif %}"><a href="{% url "follow_page" %}" class="nav__link link">My subscriptions</a></li>
                     <li class="nav__item {% if active_page == "create_recipe" %}nav__item_active{% endif %}"><a href="{% url "create_recipe" %}" class="nav__link link">Create Recipe</a></li>
                     <li class="nav__item {% if active_page == "favorites" %}nav__item_active{% endif %}"><a href="{% url "favorite_recipes" %}" class="nav__link link">Favorites</a></li>
                     <li class="nav__item {% if active_page == "shopping_list" %}nav__item_active{% endif %}"><a href="{% url "my_shopping_list" %}" class="nav__link link">Shopping list</a><span class="badge badge_style_blue nav__badge" id="counter">{{ user|recipe_shopping_count }}</span></li>

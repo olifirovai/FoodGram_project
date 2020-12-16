@@ -14,11 +14,15 @@
             {% include "recipe/page_types.html" with url_name="favorite_recipes" %}
         </div>
         <div class="card-list" >
+        {% if no_chosen_types %}
+            <h2 class="single-card__section-title" style="color: tomato">You have not chosen any recipe tags to filter, pick at least one.</h2>
+        {% else %}
             {% for recipe in page %}
                 <div class="card" data-id="{{ recipe.id }}">
                     {% include "recipe/recipeItem.html" %}
                 </div>
             {% endfor %}
+        {% endif %}
         </div>
         {% if page.has_other_pages %}
             {% include "paginator.html" with page=page paginator=paginator url_que=url_type_line %}
