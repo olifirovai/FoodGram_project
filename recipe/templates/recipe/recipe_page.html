@@ -56,7 +56,11 @@
                     {% else %}
                         <button class="button button_style_blue" name="purchases" data-out><span class="icon-plus button__icon"></span>Add to my shopping list</button>
                     {% endif %}
+                {% else %}
+                    <button class="button button_style_blue" name="purchases" data-out><span class="icon-plus button__icon"></span><a class="button button_style_blue link"  href="{% url "login" %}">Add to my shopping list</a></button>
                 {% endif %}
+
+
                 </li>
                 <li class="single-card__item">
                     {% if user.is_authenticated and user != author %}
