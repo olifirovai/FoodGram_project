@@ -3,8 +3,7 @@
 foodgram-project
 
 ## Site url:
-[lucky-recipes.ml](http://lucky-recipes.ml/) - Яндекс облако
-[lucky-recipes](http://54.67.5.215/) - AWS - мне показался, по-шустрее
+[www.luckyrecipes.org](http://www.luckyrecipes.org/)
 
 ## Starting docker-compose:
 ```
