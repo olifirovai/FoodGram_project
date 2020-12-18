@@ -7,9 +7,8 @@ urlpatterns = [
     path('about/', include('django.contrib.flatpages.urls')),
     path('auth/', include('django.contrib.auth.urls')),
     path('admin/', admin.site.urls),
-    path('', include('recipe.urls')),
     path('', include('user.urls')),
-
+    path('', include('recipe.urls')),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,
