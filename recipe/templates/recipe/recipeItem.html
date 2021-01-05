@@ -22,8 +22,8 @@
             <p class="card__text"><span class="icon-user"></span> <a href= "{% url "user_profile" recipe.author.username %}" style="color: black">{{ recipe.author|name_format }}</a></p>
         </div>
     </div>
-{% if user.is_authenticated %}
     <div class="card__footer">
+    {% if user.is_authenticated %}
 
         {% if user|is_in_shopping:recipe %}
             <button class="button button_style_light-blue-outline" name="purchases"><span class="icon-check button__icon"></span> Recipe added</button>
@@ -37,5 +37,8 @@
             <button class="button button_style_none" name="favorites" data-out><span class="icon-favorite"></span></button>
         {% endif %}
 
+
+    {% else %}
+        <button class="button button_style_light-blue" name="purchases" data-out><span class="icon-plus button__icon"></span><a class="button button_style_light-blue link"  href="{% url "login" %}">Add to my shopping list</a></button>
+    {% endif %}
     </div>
-{% endif %}

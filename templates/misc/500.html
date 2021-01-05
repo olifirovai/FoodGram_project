@@ -8,9 +8,9 @@
                 <h1>Error 500</h1>
                 <p class="lead">Oops, something went wrong. Please try again later.</p>
                 {% if user.is_authenticated %}
-                    <p class="lead"><a href="{% url "indexAuth" %}">Back to the homepage</a></p>
+                    <p class="lead"><a href="{% url "index" %}">Back to the homepage</a></p>
                 {% else %}
-                    <p class="lead"><a href="{% url "indexNotAuth" %}">Back to the homepage</a></p>
+                    <p class="lead"><a href="{% url "index" %}">Back to the homepage</a></p>
                 {% endif %}
             </div>
         </div>
