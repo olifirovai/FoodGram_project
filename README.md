@@ -1,9 +1,17 @@
+#TODO Exaplain the 
 # foodgram-project
 ![Running tests](https://github.com/olifirovai/foodgram/workflows/foodgram/badge.svg)
 foodgram-project
 
 ## Site url:
 [www.luckyrecipes.org](http://www.luckyrecipes.org/)
+
+
+## Test User
+
+You can use test user to Login:
+Username:
+Password:
 
 ## Starting docker-compose:
 ```
@@ -29,3 +37,5 @@ python manage.py createsuperuser
 * [Django 3.1.3](https://www.djangoproject.com/)
 * [PostgreSQL](https://www.postgresql.org/)
 * [Docker](https://www.docker.com/)
+
+## Licence
