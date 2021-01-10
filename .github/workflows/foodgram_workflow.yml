@@ -50,22 +50,22 @@ jobs:
           push: True
           tags: iolifirova/foodgram:latest
   
-  deploy:
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master'
-    needs: build_and_push_to_docker_hub
-    steps:
-      - uses: actions/checkout@master
-      - name: Run app using docker-compose
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USER }}
-          key: ${{ secrets.SSH_KEY }}
-          script: |
-            cd /home/ubuntu/foodgram
-            sudo docker pull iolifirova/foodgram:latest
-            sudo docker-compose up --force-recreate --no-deps -d web
-            sudo docker system prune -af
+#   deploy:
+#     runs-on: ubuntu-latest
+#     if: github.ref == 'refs/heads/master'
+#     needs: build_and_push_to_docker_hub
+#     steps:
+#       - uses: actions/checkout@master
+#       - name: Run app using docker-compose
+#         uses: appleboy/ssh-action@master
+#         with:
+#           host: ${{ secrets.HOST }}
+#           username: ${{ secrets.USER }}
+#           key: ${{ secrets.SSH_KEY }}
+#           script: |
+#             cd /home/ubuntu/foodgram
+#             sudo docker pull iolifirova/foodgram:latest
+#             sudo docker-compose up --force-recreate --no-deps -d web
+#             sudo docker system prune -af
 
 #TODO deploy to AWS EC2
