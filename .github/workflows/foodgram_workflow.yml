@@ -66,6 +66,6 @@ jobs:
             cd /home/ubuntu/foodgram
             sudo docker pull iolifirova/foodgram:latest
             sudo docker-compose up --force-recreate --no-deps -d web
-            sudo docker system prune -a
+            sudo docker system prune -af
 
 #TODO deploy to AWS EC2
