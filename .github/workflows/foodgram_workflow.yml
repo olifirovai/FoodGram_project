@@ -48,7 +48,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: True
-          tags: iolifirova/yamdb-final:latest
+          tags: iolifirova/foodgram:latest
 
 
 #TODO deploy to AWS EC2
