@@ -10,8 +10,11 @@ foodgram-project
 ## Test User
 
 You can use test user to Login:
-Username:
-Password:
+
+Username: test_user
+
+Password: jTzrNb42
+
 
 ## Starting docker-compose:
 ```
