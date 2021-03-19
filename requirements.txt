@@ -29,7 +29,7 @@ MarkupPy==1.14
 MarkupSafe==1.1.1
 odfpy==1.4.1
 openpyxl==3.0.5
-Pillow==8.0.1
+Pillow==8.1.1
 psycopg2==2.8.6
 pycparser==2.20
 PyPDF2==1.26.0
