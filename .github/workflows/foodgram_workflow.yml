@@ -26,18 +26,27 @@ jobs:
       - name: Lint with flake8
         run: flake8 .
 
-  connect_to_aws:
 
-    needs: [ tests ]
+  deploy:
+    name: Upload to AWS
     runs-on: ubuntu-latest
-
     steps:
-      - name: Configure AWS Credentials
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: "Configure AWS Credentials"
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-west-1a
-        - name: AWS Cli Processing
-          run: |
+
+      - name: Update EC2 Instance
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_KEY }}
+
+          script: |
             mkdir this_is_from_CI
