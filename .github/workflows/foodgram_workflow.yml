@@ -41,5 +41,4 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            mkdir this_is_from_CI
             ls
