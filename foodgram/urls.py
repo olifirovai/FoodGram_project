@@ -5,6 +5,7 @@ from django.urls import include, path
 from recipe.views import index
 urlpatterns = [
     path('', index, name='index'),
+    path('api/', include('api.urls')),
     path('about/', include('django.contrib.flatpages.urls')),
     path('auth/', include('django.contrib.auth.urls')),
     path('admin/', admin.site.urls),
