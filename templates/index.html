@@ -20,9 +20,11 @@
                 {% for type in recipe.recipe_types.all %}
                     <h1 class="main__title">{{ type }}</h1>
                 {% endfor %}
-                <div class="card" data-id="{{ recipe.id }}">
-                    {% include "recipe/recipeItem.html" %}
-                </div>
+
+                    <div class="card" data-id="{{ recipe.id }}">
+                       {% include "recipe/recipeItem.html" %}
+                    </div>
+
             {% endfor %}
         {% endif %}
 

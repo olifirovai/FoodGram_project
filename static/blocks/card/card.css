@@ -6,4 +6,27 @@
     box-sizing: border-box;
     border-radius: 8px;
     overflow: hidden;
+    backface-visibility: hidden;
+    perspective: 1000px;
+    transform-style: preserve-3d;
+}
+
+.flip-card-front {
+    transform: rotate(0);
+    backface-visibility: hidden;
+    transition: .7s;
+    -webkit-backface-visibility: hidden;
+}
+
+.flip-card-back {
+    backface-visibility: hidden;
+    transform: rotateY(180deg);
+    transition: .7s;
+}
+
+.card:hover .flip-card-front {
+    transform: rotateY(-180deg);
+}
+.card:hover .flip-card-back {
+    transform: rotate(0);
 }

@@ -44,6 +44,7 @@
 @import "../blocks/card-list/card-list.css";
 
 @import "../blocks/card/card.css";
+
 @import "../blocks/card/__image/card__image.css";
 @import "../blocks/card/__item/card__item.css";
 @import "../blocks/card/__title/card__title.css";
@@ -51,7 +52,7 @@
 @import "../blocks/card/__items/_column/card__items_column.css";
 @import "../blocks/card/__body/card__body.css";
 @import "../blocks/card/__text/card__text.css";
-@import "../blocks/card/__footer/card__foter.css";
+@import "../blocks/card/__footer/card__footer.css";
 
 
 
