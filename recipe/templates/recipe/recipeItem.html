@@ -1,44 +1,92 @@
 {% load recipe_filters user_filters %}
+<div class="flip-card-front">
+    <a href="{% url "recipe" recipe.author.username recipe.slug %}" class="link" target="_self">
+    {% load thumbnail %}
+        {% if not recipe.picture %}
+            <img src="/static/images/NoImage.jpg" alt="{{ recipe.name }}" class="card__image"></a>
+        {% else %}
+            {% thumbnail recipe.picture "364x240" crop="center" upscale=True as im %}
+                <img src="{{ im.url }}" alt="{{ recipe.name }}" class="card__image" width="364" height="240"></a>
+            {% endthumbnail %}
+        {% endif %}
+        <div class="card__body">
+            <a class="card__title link" href="{% url "recipe" recipe.author.username recipe.slug %}" target="_self">{{ recipe.name }}</a>
+                <ul class="card__items">
+                    {% for type in recipe.type.all %}
+                        <li class="card__item"><span class="badge badge_style_{{ type.color }}">{{ type.type_name|capfirst}}</span></li>
+                    {% endfor %}
+                </ul>
 
-<a href="{% url "recipe" recipe.author.username recipe.slug %}" class="link" target="_self">
-{% load thumbnail %}
-    {% if not recipe.picture %}
-        <img src="/static/images/NoImage.jpg" alt="{{ recipe.name }}" class="card__image"></a>
-    {% else %}
-        {% thumbnail recipe.picture "364x240" crop="center" upscale=True as im %}
-            <img src="{{ im.url }}" alt="{{ recipe.name }}" class="card__image" width="364" height="240"></a>
-        {% endthumbnail %}
-    {% endif %}
-    <div class="card__body">
-        <a class="card__title link" href="{% url "recipe" recipe.author.username recipe.slug %}" target="_self">{{ recipe.name }}</a>
-            <ul class="card__items">
-                {% for type in recipe.type.all %}
-                    <li class="card__item"><span class="badge badge_style_{{ type.color }}">{{ type.type_name|capfirst}}</span></li>
-                {% endfor %}
-            </ul>
-
-        <div class="card__items card__items_column">
-            <p class="card__text"><span class="icon-time"></span> {{ recipe.cook_time|duration_format }}</p>
-            <p class="card__text"><span class="icon-user"></span> <a href= "{% url "user_profile" recipe.author.username %}" style="color: black">{{ recipe.author|name_format }}</a></p>
+            <div class="card__items card__items_column">
+                <p class="card__text"><span class="icon-time"></span> {{ recipe.cook_time|duration_format }}</p>
+                <p class="card__text"><span class="icon-user"></span> <a href= "{% url "user_profile" recipe.author.username %}" style="color: black">{{ recipe.author|name_format }}</a></p>
+            </div>
         </div>
-    </div>
-    <div class="card__footer">
-    {% if user.is_authenticated %}
+        <div class="card__footer">
+        {% if user.is_authenticated %}
 
-        {% if user|is_in_shopping:recipe %}
-            <button class="button button_style_light-blue-outline" name="purchases"><span class="icon-check button__icon"></span> Recipe added</button>
+            {% if user|is_in_shopping:recipe %}
+                <button class="button button_style_light-blue-outline" name="purchases"><span class="icon-check button__icon"></span> Recipe added</button>
+            {% else %}
+                <button class="button button_style_light-blue" name="purchases" data-out><span class="icon-plus button__icon"></span>Add to my shopping list</button>
+            {% endif %}
+
+            {% if user|is_favorite:recipe %}
+                <button class="button button_style_none" name="favorites"><span class="icon-favorite icon-favorite_active"></span></button>
+            {% else %}
+                <button class="button button_style_none" name="favorites" data-out><span class="icon-favorite"></span></button>
+            {% endif %}
+
+
         {% else %}
-            <button class="button button_style_light-blue" name="purchases" data-out><span class="icon-plus button__icon"></span>Add to my shopping list</button>
+            <button class="button button_style_light-blue" name="purchases" data-out><span class="icon-plus button__icon"></span><a class="button button_style_light-blue link"  href="{% url "login" %}">Add to my shopping list</a></button>
         {% endif %}
+        </div>
+</div>
 
-        {% if user|is_favorite:recipe %}
-            <button class="button button_style_none" name="favorites"><span class="icon-favorite icon-favorite_active"></span></button>
+<div class="flip-card-back">
+
+    <a href="{% url "recipe" recipe.author.username recipe.slug %}" class="link" target="_self">
+    {% load thumbnail %}
+        {% if not recipe.picture %}
+            <img src="/static/images/NoImage.jpg" alt="{{ recipe.name }}" class="card__image"></a>
         {% else %}
-            <button class="button button_style_none" name="favorites" data-out><span class="icon-favorite"></span></button>
+            {% thumbnail recipe.picture "364x240" crop="center" upscale=True as im %}
+                <img src="{{ im.url }}" alt="{{ recipe.name }}" class="card__image" width="364" height="240"></a>
+            {% endthumbnail %}
         {% endif %}
+        <div class="card__body">
+            <a class="card__title link" href="{% url "recipe" recipe.author.username recipe.slug %}" target="_self">{{ recipe.name }}</a>
+                <ul class="card__items">
+                    {% for type in recipe.type.all %}
+                        <li class="card__item"><span class="badge badge_style_{{ type.color }}">{{ type.type_name|capfirst}}</span></li>
+                    {% endfor %}
+                </ul>
+
+            <div class="card__items card__items_column">
+                <p class="card__text"><span class="icon-time"></span> {{ recipe.cook_time|duration_format }}</p>
+                <p class="card__text"><span class="icon-user"></span> <a href= "{% url "user_profile" recipe.author.username %}" style="color: black">{{ recipe.author|name_format }}</a></p>
+            </div>
+        </div>
+        <div class="card__footer">
+        {% if user.is_authenticated %}
+
+            {% if user|is_in_shopping:recipe %}
+                <button class="button button_style_light-blue-outline" name="purchases"><span class="icon-check button__icon"></span> Recipe added</button>
+            {% else %}
+                <button class="button button_style_light-blue" name="purchases" data-out><span class="icon-plus button__icon"></span>Add to my shopping list</button>
+            {% endif %}
+
+            {% if user|is_favorite:recipe %}
+                <button class="button button_style_none" name="favorites"><span class="icon-favorite icon-favorite_active"></span></button>
+            {% else %}
+                <button class="button button_style_none" name="favorites" data-out><span class="icon-favorite"></span></button>
+            {% endif %}
 
 
-    {% else %}
-        <button class="button button_style_light-blue" name="purchases" data-out><span class="icon-plus button__icon"></span><a class="button button_style_light-blue link"  href="{% url "login" %}">Add to my shopping list</a></button>
-    {% endif %}
-    </div>
+        {% else %}
+            <button class="button button_style_light-blue" name="purchases" data-out><span class="icon-plus button__icon"></span><a class="button button_style_light-blue link"  href="{% url "login" %}">Add to my shopping list</a></button>
+        {% endif %}
+        </div>
+
+</div>

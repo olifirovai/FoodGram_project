@@ -26,29 +26,46 @@ jobs:
       - name: Lint with flake8
         run: flake8 .
 
-
-  deploy:
-    name: Upload to AWS
+  build_and_push_to_docker_hub:
+    name: Push Docker image to Docker Hub
+    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
+    needs: tests
     steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
 
-#      - name: copy file via ssh key
-#        uses: appleboy/scp-action@master
-#        with:
-#          host: ${{ secrets.HOST }}
-#          username: ${{ secrets.USERNAME }}
-#          port: ${{ secrets.PORT }}
-#          key: ${{ secrets.KEY }}
-#          source: "tests/a.txt,tests/b.txt"
-#          target: "test"
-
-      - name: Update EC2 Instance
-        uses: appleboy/ssh-action@master
+      - name: Login to Docker
+        uses: docker/login-action@v1
         with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USER }}
-          key: ${{ secrets.SSH_KEY }}
-          port: 22
-          script: |
-            ls
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Push to Docker Hub
+        uses: docker/build-push-action@v2
+        with:
+          push: True
+          tags: iolifirova/foodgram:latest
+  
+#   deploy:
+#     runs-on: ubuntu-latest
+#     if: github.ref == 'refs/heads/master'
+#     needs: build_and_push_to_docker_hub
+#     steps:
+#       - uses: actions/checkout@master
+#       - name: Run app using docker-compose
+#         uses: appleboy/ssh-action@master
+#         with:
+#           host: ${{ secrets.HOST }}
+#           username: ${{ secrets.USER }}
+#           key: ${{ secrets.SSH_KEY }}
+#           script: |
+#             cd /home/ubuntu/foodgram
+#             sudo docker pull iolifirova/foodgram:latest
+#             sudo docker-compose up --force-recreate --no-deps -d web
+#             sudo docker system prune -af
+
+#TODO deploy to AWS EC2

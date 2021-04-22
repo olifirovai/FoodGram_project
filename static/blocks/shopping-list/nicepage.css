@@ -4591,7 +4591,7 @@ ol {
 .u-btn {
   /*display: inline-block;*/
   display: table;
-  /*TODO maye need another solution for negative marin*/
+  /*TODO maybe need another solution for negative marin*/
   cursor: pointer;
   color: inherit;
   font-style: inherit;
